@@ -39,7 +39,7 @@ public class Workout {
     public Map<Exercise.Muscles, Double> volume() {
          Map<Exercise.Muscles, Double> setsPerMuscle = new EnumMap<>(Exercise.Muscles.class);
         for (WorkoutSet currentSet : sets) {
-            Exercise.Muscles keyPrimary = currentSet.getExercise().getPrimary();
+            Exercise.Muscles keyPrimary = currentSet.getExercise().getPrimaryMuscle();
             setsPerMuscle.put(keyPrimary, setsPerMuscle.getOrDefault(keyPrimary, 0.0) + 1);
             // we ADD the sets of the primary muscle by 1 .
 
