@@ -1,3 +1,5 @@
+package com.giannis.workout_tracker.model;
+
 import java.util.*;
 
 /**
