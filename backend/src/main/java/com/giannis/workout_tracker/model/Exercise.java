@@ -19,7 +19,8 @@ private String nameOfExercise;
 @Enumerated(EnumType.STRING)  // With the enum Type String the database gets the muscle as a string not a number
 private Muscles primaryMuscle;
 
-    @Enumerated(EnumType.STRING)    @ElementCollection // because in databases we can not have a table inside a table
+    @Enumerated(EnumType.STRING)
+    @ElementCollection // because in databases we can not have a table inside a table
 private List<Muscles>secondaries; // with ElementCollection we create a 2nd table for the secondaries muscles
 
     /**
