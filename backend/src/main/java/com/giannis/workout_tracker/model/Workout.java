@@ -1,14 +1,23 @@
 package com.giannis.workout_tracker.model;
 
+import jakarta.persistence.*;
+
 import java.time.*;
 import java.util.*;
-
+@Entity  // we make workout an entity so we can have an array of it in the DB
 public class Workout {
 
     private LocalDate date;
+    @Id  // the id of the workout for the table
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+        @OneToMany(mappedBy ="workout" )  // 1 workout corresponds to N workoutSETS
+        // mapped by = workout means that the relation is
+        // lead by WorkoutSet and its variable name to connect with this class is workout
 
     private List<WorkoutSet> sets ;
 
+    protected Workout(){}// empty constructor so hibernate can give values to the empty objects
 
     /**
      * we create the date for the workout, and we record the sets in the sets list.
@@ -29,7 +38,9 @@ public class Workout {
     }
     public void addSet(WorkoutSet set1){
         if(set1==(null)  ){throw new NullPointerException("PROBLEM: Set is null");}
-        this.sets.add(set1);}
+        this.sets.add(set1);
+        set1.setWorkout(this);  // we go to the set1 instance and set its workout as the one we are currently in, thus LINKING them
+    }
 
     /** i have a map Volume of < Muscle, Double> (ex: <Chest,10> ,  for every muscle that is
      * present on the sets , i will add the volume to the map . for primary its 1, for secondary its 0.33

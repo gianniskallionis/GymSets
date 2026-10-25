@@ -20,6 +20,8 @@ public class WorkoutSet {
     @ManyToOne(optional = false) // optional=false means that there MUST be an exercise, can not be null.
     // here we state that many (WORKOUTSETS) are corresponded to ONE exercise
     private Exercise exercise; // i need setter/getter for exercise
+    @ManyToOne(optional = false)
+    private Workout workout ; // creates  the column "workout_id" in the table WorkoutSet
 
 
     public Long getId(){
@@ -69,6 +71,10 @@ public class WorkoutSet {
         this.exercise=exercise;
     }
 
+    public void setWorkout(Workout workout){
+        Objects.requireNonNull(workout,"PROBLEM:workout is null");
+        this.workout=workout;
+    }
 
 
 
