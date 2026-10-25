@@ -11,8 +11,11 @@ public class Workout {
     @Id  // the id of the workout for the table
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-        @OneToMany(mappedBy ="workout" )  // 1 workout corresponds to N workoutSETS
-        // mapped by = workout means that the relation is
+
+
+    // cascade is what happens to childen entities when a father entity is altered
+        @OneToMany(cascade=CascadeType.ALL,                    orphanRemoval = true                 ,mappedBy ="workout" )  // 1 workout corresponds to N workoutSETS
+        //  cascadeType.ALL = we have all the funcions of the cascade,orphanRemoval means that when a set is without a workout, its deleted                mapped by = workout means that the relation is
         // lead by WorkoutSet and its variable name to connect with this class is workout
 
     private List<WorkoutSet> sets ;
