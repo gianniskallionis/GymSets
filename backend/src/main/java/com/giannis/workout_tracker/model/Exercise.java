@@ -45,7 +45,7 @@ private List<Muscles>secondaries; // with ElementCollection we create a 2nd tabl
     /**
      * the muscles are enumerated and specific
      */
-    enum Muscles {
+   public enum Muscles {
     TRAPS, RHOMBOIDS, LATS, ERECTORS, FRONT_DELTS, SIDE_DELTS, REAR_DELTS, BICEPS,
     TRICEPS, FOREARMS, CHEST, ABS, QUADS, GLUTES, HAMSTRINGS, CALVES, ADDUCTORS}
 
