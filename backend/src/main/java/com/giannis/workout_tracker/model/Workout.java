@@ -11,6 +11,8 @@ public class Workout {
     @Id  // the id of the workout for the table
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    public Long getId(){
+        return id;}
 
 
     // cascade is what happens to childen entities when a father entity is altered
