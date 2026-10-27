@@ -64,7 +64,7 @@ public class WorkoutSet {
     /**
      *
      * @param exercise: the object exercise which has the variables(name,primary,secondaries) in it .
-     *The set has been created in main and it is passed here as a parameter
+     *The set has been created  and it is passed here as a parameter
      */
     public void setExercise(Exercise exercise){
         Objects.requireNonNull(exercise,"PROBLEM: exercise is null");
