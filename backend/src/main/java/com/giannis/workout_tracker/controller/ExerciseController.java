@@ -5,11 +5,9 @@ import com.giannis.workout_tracker.dto.ExerciseResponse;
 import com.giannis.workout_tracker.dto.CreateExerciseRequest;
 import com.giannis.workout_tracker.model.Exercise;
 import com.giannis.workout_tracker.repository.ExerciseRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController // the return goes back as Json, to the client
@@ -42,11 +40,30 @@ public class ExerciseController {
 
     }
 
+    /**
+     * The client Gets a list of all the exercises.
+     * since the client needs them, we have to present them in the form : exerciseResponse
+     * @return the list of exercises in the correct form
+     */
+    @GetMapping
+    public List <ExerciseResponse>  getAllExercises(){
+    List <ExerciseResponse> listOfExercises = new ArrayList<>();
+    for (Exercise E:exerciseRepository.findAll()) { // for every exercise in the repository
 
-    
-    
+        ExerciseResponse Ex=new ExerciseResponse(E.getId() , E.getNameOfExercise() , E.getPrimaryMuscle(), E.getSecondaries()) ;
+        // we make an Exercise reponse out of the exercise so we can  receive it
+        listOfExercises.add(Ex);
+    }
+        return listOfExercises;
+
+    }
+
+
+
+    }
 
 
 
 
-}
+
+
