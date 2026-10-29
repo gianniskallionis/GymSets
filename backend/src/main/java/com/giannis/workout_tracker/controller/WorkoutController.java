@@ -5,6 +5,7 @@ import com.giannis.workout_tracker.dto.CreateWorkoutRequest;
 import com.giannis.workout_tracker.dto.CreateWorkoutSetRequest;
 import com.giannis.workout_tracker.dto.WorkoutResponse;
 import com.giannis.workout_tracker.dto.WorkoutSetResponse;
+import com.giannis.workout_tracker.model.Exercise;
 import com.giannis.workout_tracker.model.Workout;
 import com.giannis.workout_tracker.model.WorkoutSet;
 import com.giannis.workout_tracker.repository.ExerciseRepository;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController       // all the returns inside the class goes to the client as Json ( through the api)
 @RequestMapping("/workouts") // all methods in the class communicate with the api through the common /workouts
@@ -49,7 +51,7 @@ public class WorkoutController {
     /**
      * it creates a workoutSet with data from the client and it saves it in the DB , then it returns  the same object with its id filled
      * @param request the object with data from the client
-     * @return the object with data of the saved workoutSet
+     * @return the object with data of the saved workoutSe
      */
     @PostMapping("/{id}/sets") // we take the id of the workout to use in the set
     public WorkoutSetResponse createWorkoutSet(@PathVariable Long id, @RequestBody CreateWorkoutSetRequest request ){
@@ -73,7 +75,17 @@ public class WorkoutController {
 
     }
 
-
+    /**
+     * the method where we find the volume of the workout  given the id
+     * @param id the id of the workout
+     * @return the volume for all the muscles involved
+     */
+    @GetMapping("/{id}/volume")
+       public Map<Exercise.Muscles,Double> getVolume(@PathVariable Long id ){
+        Workout currentWorkout= workoutRepository.findById(id).orElseThrow();
+        // we make a new Workout object from the id given as a parameter.
+            return currentWorkout.volume();
+    }
 
 
 }
