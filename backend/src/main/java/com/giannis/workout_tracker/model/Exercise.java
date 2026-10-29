@@ -99,10 +99,10 @@ private List<Muscles>secondaries; // with ElementCollection we create a 2nd tabl
 
 
 
-    public Exercise(String name, Muscles primaryMuscle, List<Muscles>list1) {
+    public Exercise(String name, Muscles primaryMuscle, List<Muscles>listOfSecondaries) {
         setNameOfExercise(name);
         setPrimaryMuscle(primaryMuscle);
-        setSecondaries(list1);
+        setSecondaries(listOfSecondaries);
     }
 
 
