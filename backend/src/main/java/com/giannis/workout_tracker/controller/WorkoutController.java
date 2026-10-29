@@ -83,7 +83,7 @@ public class WorkoutController {
     @GetMapping("/{id}/volume")
        public Map<Exercise.Muscles,Double> getVolume(@PathVariable Long id ){
         Workout currentWorkout= workoutRepository.findById(id).orElseThrow();
-        // we make a new Workout object from the id given as a parameter.
+        // we make find the Workout  object from the id given as a parameter.
             return currentWorkout.volume();
     }
 
