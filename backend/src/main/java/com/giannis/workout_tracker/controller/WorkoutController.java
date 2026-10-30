@@ -1,10 +1,7 @@
 package com.giannis.workout_tracker.controller;
 
 
-import com.giannis.workout_tracker.dto.CreateWorkoutRequest;
-import com.giannis.workout_tracker.dto.CreateWorkoutSetRequest;
-import com.giannis.workout_tracker.dto.WorkoutResponse;
-import com.giannis.workout_tracker.dto.WorkoutSetResponse;
+import com.giannis.workout_tracker.dto.*;
 import com.giannis.workout_tracker.model.Exercise;
 import com.giannis.workout_tracker.model.Workout;
 import com.giannis.workout_tracker.model.WorkoutSet;
@@ -86,6 +83,25 @@ public class WorkoutController {
         // we make find the Workout  object from the id given as a parameter.
             return currentWorkout.volume();
     }
+
+
+    @GetMapping
+    public List <WorkoutResponse> getAllWorkouts(){
+        List <WorkoutResponse> listOfWorkouts = new ArrayList<>();
+        for (Workout W:workoutRepository.findAll()) { // for every workout in the repository
+
+            WorkoutResponse Wo=new WorkoutResponse(W.getId() ,W.getDate().getYear(),W.getDate().getMonthValue(),W.getDate().getDayOfMonth()) ;
+            // we make a Workout response out of the Workout so we can  receive it
+            listOfWorkouts.add(Wo);
+        }
+        return listOfWorkouts;
+
+
+
+
+    }
+
+
 
 
 }
