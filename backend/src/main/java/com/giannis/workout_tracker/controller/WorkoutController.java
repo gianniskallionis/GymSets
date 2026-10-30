@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController       // all the returns inside the class goes to the client as Json ( through the api)
 @RequestMapping("/workouts") // all methods in the class communicate with the api through the common /workouts
@@ -54,10 +55,13 @@ public class WorkoutController {
     public WorkoutSetResponse createWorkoutSet(@PathVariable Long id, @RequestBody CreateWorkoutSetRequest request ){
         //                  pathVariable takes whatever is in the {id} from the postmapping and puts it in the id
 
-        Workout workoutOfTheSet=workoutRepository.findById(id).orElseThrow(); // the workout of the Set
+        Workout workoutOfTheSet=workoutRepository.findById(id).orElseThrow(()->new NoSuchElementException("Workout "+id +" not found" ));
+        // the workout of the Set . if not found , the exception shows a message
 
         //                                   a workoutSet has ( Exercise, KG, reps )
-        WorkoutSet workoutsetCreated =new WorkoutSet(  exerciseRepository.findById(request.exerciseId()).orElseThrow(),request.kg(),request.reps());
+        WorkoutSet workoutsetCreated =new WorkoutSet(  exerciseRepository.findById(request.exerciseId()).
+                orElseThrow(()->new NoSuchElementException("Exercise "+ request.exerciseId() +" not found"))
+                ,request.kg(),request.reps());
         // in the repository classes through the extends we have methods to find each entity( to find an exercise you need
         // an exerciseRepository object, and you can find the exercise by id and other methods are available.
         workoutOfTheSet.addSet(workoutsetCreated);  // we add the set we created to its workout
@@ -79,8 +83,8 @@ public class WorkoutController {
      */
     @GetMapping("/{id}/volume")
        public Map<Exercise.Muscles,Double> getVolume(@PathVariable Long id ){
-        Workout currentWorkout= workoutRepository.findById(id).orElseThrow();
-        // we make find the Workout  object from the id given as a parameter.
+        Workout currentWorkout= workoutRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Workout "+id+" not found"));
+        // we make find the Workout  object from the id given as a parameter.  If not found, throws exception with message
             return currentWorkout.volume();
     }
 

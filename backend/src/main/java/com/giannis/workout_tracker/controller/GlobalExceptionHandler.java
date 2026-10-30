@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.DateTimeException;
 import java.util.NoSuchElementException;
 
 /**
@@ -27,6 +28,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
                 //  The response towards the client will have status Not_Found==404.
     }           // and the message of the response is given with the body(ex.getMessage() )
+
+
+    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class, DateTimeException.class})
+    ResponseEntity<String> IllegalAndNullHandler(RuntimeException ex){ // all 3 of the parameters are a kind of Runtime Exception
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+
+
+    }
+
+
+
 
 
     public GlobalExceptionHandler() {

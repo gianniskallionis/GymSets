@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/sets")
 public class WorkoutSetController {
@@ -15,6 +17,9 @@ public class WorkoutSetController {
 
     @DeleteMapping("/{setId}")
     public void DeleteWorkoutSet(@PathVariable Long setId ){
+        if (! workoutSetRepository.existsById(setId)){
+            throw new NoSuchElementException("Set "+setId+" not found ");
+        }
         workoutSetRepository.deleteById(setId);
         // finds the workoutSet from the repo  using its id and it deletes it
 
