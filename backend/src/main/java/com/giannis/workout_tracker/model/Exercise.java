@@ -9,7 +9,7 @@ public class Exercise {
      *  the class contains the name of the exercises and the muscles it uses
      *
      *
-     *  TO DO : make deep copy of the list for primary and secondaries so it has defensive copies
+     *
      *
      */
 @Id
