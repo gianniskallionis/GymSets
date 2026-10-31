@@ -1,6 +1,8 @@
 package com.giannis.workout_tracker.controller;
 
+import com.giannis.workout_tracker.config.JwtService;
 import com.giannis.workout_tracker.dto.LoginRequest;
+import com.giannis.workout_tracker.dto.LoginResponse;
 import com.giannis.workout_tracker.dto.RegisterRequest;
 import com.giannis.workout_tracker.dto.UserResponse;
 import com.giannis.workout_tracker.model.User;
@@ -15,14 +17,15 @@ import java.util.Objects;
 public class AuthController {
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private JwtService jwtService;
 
 
     // the passwordEncoder and the userRepository are made with @bean, i had to write the passwordEncoder one
     // but the userRepository is made automatically since it extends JpaRepository
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository=userRepository;
         this.passwordEncoder=passwordEncoder;
-
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -48,7 +51,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public  UserResponse loginUser(@RequestBody LoginRequest request){
+    public LoginResponse loginUser(@RequestBody LoginRequest request){
         Objects.requireNonNull(request.password(),"username or password is incorrect");
         if(request.password().isBlank()){
             throw new IllegalArgumentException("username or password is incorrect");
@@ -58,12 +61,14 @@ public class AuthController {
         User currentUser=userRepository.findByUsername(request.username()).orElseThrow(()
                 ->new IllegalArgumentException("username or password is incorrect"));
             if (passwordEncoder.matches( request.password(),currentUser.getPasswordHash() )){
-                return new UserResponse(currentUser.getId(), currentUser.getUsername());
-                // since this user ALREADY exists, we don't need to use repository.save to create an id , he already has one
+                String token = jwtService.generateToken(currentUser.getUsername());
+                return new LoginResponse(token);
+
 
             }else throw new IllegalArgumentException("username or password is incorrect");
-
     }
+
+
 
 
 
