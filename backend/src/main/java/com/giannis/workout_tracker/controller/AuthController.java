@@ -1,5 +1,6 @@
 package com.giannis.workout_tracker.controller;
 
+import com.giannis.workout_tracker.dto.LoginRequest;
 import com.giannis.workout_tracker.dto.RegisterRequest;
 import com.giannis.workout_tracker.dto.UserResponse;
 import com.giannis.workout_tracker.model.User;
@@ -43,14 +44,31 @@ public class AuthController {
             UserResponse userResponse=new UserResponse(currentUser.getId(), currentUser.getUsername());
 
             return userResponse;
+    }
 
 
+    @PostMapping("/login")
+    public  UserResponse loginUser(@RequestBody LoginRequest request){
+        Objects.requireNonNull(request.password(),"username or password is incorrect");
+        if(request.password().isBlank()){
+            throw new IllegalArgumentException("username or password is incorrect");
+        }
+        // we give a general exception message to prevent an attacker from figuring out which  usernames already exist
+        // from the error code
+        User currentUser=userRepository.findByUsername(request.username()).orElseThrow(()
+                ->new IllegalArgumentException("username or password is incorrect"));
+            if (passwordEncoder.matches( request.password(),currentUser.getPasswordHash() )){
+                return new UserResponse(currentUser.getId(), currentUser.getUsername());
+                // since this user ALREADY exists, we don't need to use repository.save to create an id , he already has one
 
-
-
-
+            }else throw new IllegalArgumentException("username or password is incorrect");
 
     }
+
+
+
+
+
 
 
 }
