@@ -95,17 +95,21 @@ public class WorkoutController {
      * @return the volume for all the muscles involved
      */
     @GetMapping("/{id}/volume")
-       public Map<Exercise.Muscles,Double> getVolume(@PathVariable Long id ){
+       public Map<Exercise.Muscles,Double> getVolume(@PathVariable Long id,Authentication authentication ){
         Workout currentWorkout= workoutRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Workout "+id+" not found"));
-        // we make find the Workout  object from the id given as a parameter.  If not found, throws exception with message
-            return currentWorkout.volume();
+        // we  find the Workout  object from the id given as a parameter.  If not found, throws exception with message
+            if (currentWorkout.getUser().getUsername().equals(authentication.getName())){
+                return currentWorkout.volume(); // we return the volume ONLY if its the correct user's workout, only the owner can access it
+            }
+            throw new NoSuchElementException("Workout not found ");
+
     }
 
 
     @GetMapping
-    public List <WorkoutResponse> getAllWorkouts(){
+    public List <WorkoutResponse> getAllWorkouts(Authentication authentication){
         List <WorkoutResponse> listOfWorkouts = new ArrayList<>();
-        for (Workout W:workoutRepository.findAll()) { // for every workout in the repository
+        for (Workout W: workoutRepository.findByUserUsername(authentication.getName())) { // for every workout in the repository
 
             WorkoutResponse Wo=new WorkoutResponse(W.getId() ,W.getDate().getYear(),W.getDate().getMonthValue(),W.getDate().getDayOfMonth()) ;
             // we make a Workout response out of the Workout so we can  receive it
