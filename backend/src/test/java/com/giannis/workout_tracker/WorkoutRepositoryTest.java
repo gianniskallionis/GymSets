@@ -2,9 +2,11 @@ package com.giannis.workout_tracker;
 
 
 import com.giannis.workout_tracker.model.Exercise;
+import com.giannis.workout_tracker.model.User;
 import com.giannis.workout_tracker.model.Workout;
 import com.giannis.workout_tracker.model.WorkoutSet;
 import com.giannis.workout_tracker.repository.ExerciseRepository;
+import com.giannis.workout_tracker.repository.UserRepository;
 import com.giannis.workout_tracker.repository.WorkoutRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +32,15 @@ public class WorkoutRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Test
     public void testSaveWorkout(){
         //1 Arrange
                 // creating the workout
+        User user= new User("giannis","test1234");//the user of the workout
         Workout workout= new Workout(2026,10,27);
         Exercise exerciseBench = new Exercise("Bench press", Exercise.Muscles.CHEST,
                 new ArrayList<>(List.of(Exercise.Muscles.TRICEPS, Exercise.Muscles.FRONT_DELTS)));
@@ -42,11 +48,13 @@ public class WorkoutRepositoryTest {
         WorkoutSet setBench2=new WorkoutSet(exerciseBench,65.0,8);
         workout.addSet(setBench1);
         workout.addSet(setBench2);
+        workout.setUser(user); // setting the user
         //2  ACT
+        userRepository.save(user);  // saving the user in the db
         exerciseRepository.save(exerciseBench); // we need to save the exercise too , not only the workout
-        Workout saved = workoutRepository.save(workout);
+        Workout saved = workoutRepository.save(workout); // saving the workout to the db
 
-        entityManager.flush();   // saving the workout to the db
+        entityManager.flush();
         entityManager.clear();
 
 

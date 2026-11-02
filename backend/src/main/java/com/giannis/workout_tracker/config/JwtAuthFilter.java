@@ -1,10 +1,12 @@
 package com.giannis.workout_tracker.config;
 
+import com.giannis.workout_tracker.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -28,11 +30,13 @@ any other class that needs it automatically without me writing code
 */
 public class JwtAuthFilter extends OncePerRequestFilter {
     JwtService jwtService;
+    UserRepository userRepository;
 
 
 
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService=jwtService;
+        this.userRepository=userRepository;
     }
 
     /**
@@ -53,8 +57,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // save the token
            try {
                String username= jwtService.extractUsername(token);
-               var auth = new UsernamePasswordAuthenticationToken(username, null, List.of());
-               SecurityContextHolder.getContext().setAuthentication(auth);
+               if( userRepository.existsByUsername(username)  ){ // if the username doesn't exist
+                   var auth = new UsernamePasswordAuthenticationToken(username, null, List.of());
+                   SecurityContextHolder.getContext().setAuthentication(auth);}
+
 
            } catch(Exception e){System.out.println("JWT ERROR: " + e.getMessage());};
 

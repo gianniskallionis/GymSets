@@ -12,4 +12,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
     // such words are Find+name of a field ex: findByDate, findByUsername , etc.
     //  existsByUsername, existsByDate, returns T/F
     // countBy, deleteBy, etc
+    boolean existsByUsername(String username);
+
+
+
+
 }
