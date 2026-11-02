@@ -60,16 +60,16 @@ public class WorkoutController {
     }
 
     /**
-     * it creates a workoutSet with data from the client and it saves it in the DB , then it returns  the same object with its id filled
+     * it creates a workoutSet with data from the client, and it saves it in the DB , then it returns  the same object with its id filled
      * @param request the object with data from the client
      * @return the object with data of the saved workoutSe
      */
     @PostMapping("/{id}/sets") // we take the id of the workout to use in the set
-    public WorkoutSetResponse createWorkoutSet(@PathVariable Long id, @RequestBody CreateWorkoutSetRequest request ){
+    public WorkoutSetResponse createWorkoutSet(@PathVariable Long id, @RequestBody CreateWorkoutSetRequest request,Authentication authentication ){
         //                  pathVariable takes whatever is in the {id} from the postmapping and puts it in the id
 
-        Workout workoutOfTheSet=workoutRepository.findById(id).orElseThrow(()->new NoSuchElementException("Workout "+id +" not found" ));
-        // the workout of the Set . if not found , the exception shows a message
+        Workout workoutOfTheSet= returnWorkout(id, authentication.getName());
+        // we find the workout from the id  of the workout and the name of the user from the token
 
         //                                   a workoutSet has ( Exercise, KG, reps )
         WorkoutSet workoutsetCreated =new WorkoutSet(  exerciseRepository.findById(request.exerciseId()).
@@ -79,7 +79,6 @@ public class WorkoutController {
         // an exerciseRepository object, and you can find the exercise by id and other methods are available.
         workoutOfTheSet.addSet(workoutsetCreated);  // we add the set we created to its workout
         workoutsetCreated= workoutSetRepository.save(workoutsetCreated);
-
         WorkoutSetResponse workoutSetSaved= new WorkoutSetResponse(workoutsetCreated.getId(),
                 (        (workoutsetCreated.getExercise() ).getId()   ),
                 //              (    exercise  ).id
@@ -96,12 +95,9 @@ public class WorkoutController {
      */
     @GetMapping("/{id}/volume")
        public Map<Exercise.Muscles,Double> getVolume(@PathVariable Long id,Authentication authentication ){
-        Workout currentWorkout= workoutRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Workout "+id+" not found"));
         // we  find the Workout  object from the id given as a parameter.  If not found, throws exception with message
-            if (currentWorkout.getUser().getUsername().equals(authentication.getName())){
-                return currentWorkout.volume(); // we return the volume ONLY if its the correct user's workout, only the owner can access it
-            }
-            throw new NoSuchElementException("Workout not found ");
+       return returnWorkout(id,authentication.getName())     .volume();
+
 
     }
 
@@ -119,9 +115,27 @@ public class WorkoutController {
 
     }
 
+    /**
+     * we return the workout if it's the righteous owner that requests it
+     * @param id the id of the workout
+     * @param username the username of the user
+     * @return the workout if the correctu user asks it , otherwise we throw an exception
+     */
+    private Workout returnWorkout(Long id, String username){//id is  the id of the workout
+        Workout currentWorkout= workoutRepository.findById(id).orElseThrow(()->new NoSuchElementException("workout "+id+ " not found"));
+        // we find the workout from its id, if it doesn't exist we throw
+        User currentUser=  currentWorkout.getUser();
+        if (currentUser.getUsername().equals(username)){ // if the username of the user ( of the workout )
+            // matches with the username given as the parameter, we return the workout
+            return currentWorkout;
+        }
+        throw new NoSuchElementException(("workout "+id+ " not found"));
+        // if the username is not the one matching the username of the user of the workout
+        }
+
+    }
 
 
 
 
 
-}
