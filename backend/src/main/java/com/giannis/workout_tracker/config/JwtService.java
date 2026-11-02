@@ -26,4 +26,33 @@ public class JwtService {
                 .signWith(key)  // and it signs the key
                 .compact();
     }
+
+    /**
+     * if the token is invalid or expired it throws a JwException
+     *
+     * @return the username of the user with the  token given as a parameter
+     */
+    public String extractUsername(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
