@@ -3,11 +3,14 @@ package com.giannis.workout_tracker.controller;
 
 import com.giannis.workout_tracker.dto.*;
 import com.giannis.workout_tracker.model.Exercise;
+import com.giannis.workout_tracker.model.User;
 import com.giannis.workout_tracker.model.Workout;
 import com.giannis.workout_tracker.model.WorkoutSet;
 import com.giannis.workout_tracker.repository.ExerciseRepository;
+import com.giannis.workout_tracker.repository.UserRepository;
 import com.giannis.workout_tracker.repository.WorkoutRepository;
 import com.giannis.workout_tracker.repository.WorkoutSetRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,12 +25,14 @@ public class WorkoutController {
     private final WorkoutRepository workoutRepository;
     private final ExerciseRepository exerciseRepository;
     private final WorkoutSetRepository workoutSetRepository;
+    private final UserRepository userRepository;
 
 
-    public WorkoutController(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, WorkoutSetRepository workoutSetRepository) {
+    public WorkoutController(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, WorkoutSetRepository workoutSetRepository, UserRepository userRepository) {
         this.workoutRepository=workoutRepository;
         this.exerciseRepository = exerciseRepository;
         this.workoutSetRepository = workoutSetRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -36,13 +41,21 @@ public class WorkoutController {
      * @return the object back
      */
     @PostMapping               // requestBody turns the json input and turns them into java objects
-    public WorkoutResponse createWorkout(@RequestBody CreateWorkoutRequest request ){
+    public WorkoutResponse createWorkout(@RequestBody CreateWorkoutRequest request, Authentication authentication){
+//                                                  we need the authentication parameter to find out who sent the request
+        User userOfWorkout=userRepository.findByUsername(authentication.getName())
+                .orElseThrow(()->new IllegalArgumentException("user with this username does not exist"))  ;
+
+
 
         Workout workoutCreated=new Workout(request.year(), request.month(), request.day()); // we create a new workout with the date
+        workoutCreated.setUser(userOfWorkout);// we save the user into the workout before we save it in the DB
         workoutCreated=workoutRepository.save(workoutCreated); // we save it in the DB
 
         return new WorkoutResponse(workoutCreated.getId(), workoutCreated.getDate().getYear() ,workoutCreated.getDate().getMonthValue()
                 , workoutCreated.getDate().getDayOfMonth());  // we return a workout object witht the id and the date
+
+
 
     }
 
@@ -100,10 +113,9 @@ public class WorkoutController {
         }
         return listOfWorkouts;
 
-
-
-
     }
+
+
 
 
 

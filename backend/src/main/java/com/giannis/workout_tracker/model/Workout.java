@@ -14,6 +14,17 @@ public class Workout {
     public Long getId(){
         return id;}
 
+    @ManyToOne(optional=false)
+    private User user;
+    public void setUser(User user){
+        if(user==null){throw new NullPointerException("PROBLEM:User is null");}
+        this.user=user;
+    }
+
+    public User getUser(){
+            return user;
+        }
+
 
     // cascade is what happens to childen entities when a father entity is altered
         @OneToMany(cascade=CascadeType.ALL,                    orphanRemoval = true                 ,mappedBy ="workout" )  // 1 workout corresponds to N workoutSETS
@@ -67,7 +78,7 @@ public class Workout {
 
     /** i have a map Volume of < Muscle, Double> (ex: <Chest,10> ,  for every muscle that is
      * present on the sets , i will add the volume to the map . for primary its 1, for secondary its 0.33
-     * to add the sets. the getOrDefault method ensures the map is initiated with 0 as its value to not have null values
+     * to add the sets. the getOrDefault method returns 0.0 when there is no key  so we do  not have null values
      * setsPerMuscle is a local variable, whenever we need the map we must call the method.
      */
     public Map<Exercise.Muscles, Double> volume() {
