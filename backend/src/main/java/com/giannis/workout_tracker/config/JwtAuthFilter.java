@@ -1,12 +1,10 @@
 package com.giannis.workout_tracker.config;
 
 import com.giannis.workout_tracker.repository.UserRepository;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -51,13 +49,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String header= request.getHeader("Authorization");  // the name of the header is Authorization
-        // header has the info: what type of token it is and what algorith is used to sign it
+        // header the metadata of the token
         if (header!=null && header.startsWith("Bearer ")){
             String token=header.substring(7);// we cut-off the first 7 letters of the header(Bearer ) and we
             // save the token
            try {
                String username= jwtService.extractUsername(token);
-               if( userRepository.existsByUsername(username)  ){ // if the username doesn't exist
+               if( userRepository.existsByUsername(username)  ){ // if the username  exists
                    var auth = new UsernamePasswordAuthenticationToken(username, null, List.of());
                    SecurityContextHolder.getContext().setAuthentication(auth);}
 
