@@ -1,7 +1,7 @@
 import {useState } from "react";
 function App(){
 
-// we have the username variable and setUsername changes it .
+const [token,setToken]=useState("");
 const [username,setUsername]= useState("");
 const [password,setPassword]= useState("");
  //        we initialize the username variable with the useState("");
@@ -18,15 +18,16 @@ const handleRegister=  ()=> {
     example.    username:giannis. same goes for password. we type password but its password:1234 or smth */
 
 
- /**  fetch sends username and password  to /auth/login . the first then  turns the answer into json.
- the second then  takes the result which is {token:...} and it shows it to console
+ /**  fetch sends username and password  to /auth/login . the first then  turns the answer(token) into json.
+ the second then  takes the result which is {token:...} and it shows the token  to console
   */
  const handleLogin= ()=>{
      fetch("http://localhost:8080/auth/login",
          {method:"POST", headers:{ "Content-Type": "application/json"},
          body: JSON.stringify({username,password})  })  .
          then( fetch_answer =>{return fetch_answer.json();}     ).
-         then(clean_data => {console.log(clean_data) ;
+         then(clean_data => {setToken(clean_data); // after the login we save the token
+             console.log(clean_data) ;
              });
      }
 
@@ -52,6 +53,8 @@ return(
     <button onClick={handleLogin}>
         Login
     </button>
+    <div> { token && <p>Logged in </p> } </div>
+    {/* this is as if you type: if(token){printf logged in},if var is " " it is false, so if its true then it isn't empty */}
 
 
  </div> )
