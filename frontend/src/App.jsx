@@ -18,6 +18,19 @@ const handleRegister=  ()=> {
     example.    username:giannis. same goes for password. we type password but its password:1234 or smth */
 
 
+ /**  fetch sends username and password  to /auth/login . the first then  turns the answer into json.
+ the second then  takes the result which is {token:...} and it shows it to console
+  */
+ const handleLogin= ()=>{
+     fetch("http://localhost:8080/auth/login",
+         {method:"POST", headers:{ "Content-Type": "application/json"},
+         body: JSON.stringify({username,password})  })  .
+         then( fetch_answer =>{return fetch_answer.json();}     ).
+         then(clean_data => {console.log(clean_data) ;
+             });
+     }
+
+
 return(
  <div>
      <input
@@ -34,6 +47,10 @@ return(
     />
     <button onClick={handleRegister}>
         Register
+    </button>
+
+    <button onClick={handleLogin}>
+        Login
     </button>
 
 
