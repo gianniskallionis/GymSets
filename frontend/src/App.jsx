@@ -18,17 +18,28 @@ const handleRegister=  ()=> {
     example.    username:giannis. same goes for password. we type password but its password:1234 or smth */
 
 
- /**  fetch sends username and password  to /auth/login . the first then  turns the answer(token) into json.
- the second then  takes the result which is {token:...} and it shows the token  to console
+ /**  fetch sends username and password  to /auth/login . the first then  takes the answer(status, headers, body)
+ keeps only its body and turns it into json
+ the second then  takes the result which is {token:...} and saves it in the state and shows it on console
   */
  const handleLogin= ()=>{
      fetch("http://localhost:8080/auth/login",
          {method:"POST", headers:{ "Content-Type": "application/json"},
          body: JSON.stringify({username,password})  })  .
-         then( fetch_answer =>{return fetch_answer.json();}     ).
-         then(clean_data => {setToken(clean_data); // after the login we save the token
-             console.log(clean_data) ;
+         then( fetch_answer =>{return fetch_answer.json();}     ). //
+         then(clean_data => {setToken(clean_data.token); // clean_data is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx
+             console.log(clean_data.token) ;
              });
+     }
+
+
+
+
+ const handleLoadExercises= ()=> {
+     fetch("http://localhost:8080/exercises",
+         { method:"GET", headers: {"Authorization":`Bearer ${token}` }   }  ).
+         then(fetch_answer => {return fetch_answer.json(); }     ).
+         then (clean_data => {   console.log(clean_data);   }   );
      }
 
 
@@ -54,7 +65,10 @@ return(
         Login
     </button>
     <div> { token && <p>Logged in </p> } </div>
-    {/* this is as if you type: if(token){printf logged in},if var is " " it is false, so if its true then it isn't empty */}
+    {/* this is as if you type: if(token){printf logged in},if var is "" it is false, so if its true then it isn't empty */}
+    <button onClick={handleLoadExercises}>
+        Load Exercises
+        </button>
 
 
  </div> )
