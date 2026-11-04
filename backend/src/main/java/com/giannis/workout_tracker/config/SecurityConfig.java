@@ -36,7 +36,7 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST" ,"DELETE", "OPTIONS")    ); // what is he allowed to do
         config.setAllowedHeaders(List.of("Content-Type", "Authorization"  )   ); // which headers are allowed
         UrlBasedCorsConfigurationSource source= new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**",config);  // the config with the 3 rules  stated above work for all endpoints
+        source.registerCorsConfiguration("/**",config);  // the config with the 3 rules   stated above work for all endpoints
         return source;
 
 
