@@ -1,6 +1,16 @@
-import {useState } from "react";
+import {useEffect,useState } from "react";
+
+// for a dynamic list (that changes) you need an id for each element
+const muscles=[
+    'TRAPS', 'RHOMBOIDS', 'LATS', 'ERECTORS','FRONT_DELTS','SIDE_DELTS','REAR_DELTS','BICEPS',
+        'TRICEPS', 'FOREARMS', 'CHEST', 'ABS', 'QUADS', 'GLUTES', 'HAMSTRINGS', 'CALVES', 'ADDUCTORS']
+
+
 function App(){
 
+const [exerciseName,setExerciseName]=useState("");
+const [primaryMuscle,setPrimaryMuscle]=useState("");
+const [exercises,setExercises]=useState([]);
 const [token,setToken]=useState("");
 const [username,setUsername]= useState("");
 const [password,setPassword]= useState("");
@@ -32,16 +42,34 @@ const handleRegister=  ()=> {
              });
      }
 
-
-
-
- const handleLoadExercises= ()=> {
+ const handleAddExercise= ()=>{if(primaryMuscle) { // if primaryMuscle is not empty
      fetch("http://localhost:8080/exercises",
-         { method:"GET", headers: {"Authorization":`Bearer ${token}` }   }  ).
-         then(fetch_answer => {return fetch_answer.json(); }     ).
-         then (clean_data => {   console.log(clean_data);   }   );
-     }
+         {method:"POST",headers:{ "Content-Type":"application/json","Authorization":`Bearer ${token}`},
+          body:JSON.stringify({name:exerciseName,primaryMuscle,listOfSecondaries:[]})   })
+            //             java dto name: jsx var name         we send an empty list   fetch closes before .then
+            .then(fetch_answer  =>{return fetch_answer.json();} ). // we only use the body from the whole answer(status,header,body)
+            then(clean_data => {setExercises([...exercises,clean_data]) // on the list exercises we add the clean_data exercise
+                setExerciseName("");} ) // we add the exercise to the list,
+               }}
 
+
+
+
+
+
+
+
+
+
+
+
+
+ useEffect( ()=> { if(token){
+fetch("http://localhost:8080/exercises",
+         { method:"GET", headers: {"Authorization":`Bearer ${token}` }   }  ).
+         then(fetch_answer => {return fetch_answer.json(); }).// fetch_answer is the whole answer (status,header,body). with .json u open the body and make it into json
+         then (clean_data => {   setExercises(clean_data);   }   ); // clean_data is the list of exercises
+    }},[token] ) ;
 
 return(
  <div>
@@ -66,12 +94,29 @@ return(
     </button>
     <div> { token && <p>Logged in </p> } </div>
     {/* this is as if you type: if(token){printf logged in},if var is "" it is false, so if its true then it isn't empty */}
-    <button onClick={handleLoadExercises}>
-        Load Exercises
-        </button>
+        <ul> {/*ul=list , li=item of list            */}
+                 {exercises.map(ex=> <li key={ex.id} >            {ex.name}       </li> ) }
+        </ul> {/*  <li attribute > content </li>     */}
+              {/* exercises= array, map=loop(like for each that returns a new list  ), ex=temp var(like i) */}
+    <input
+    type="text"
+    value={exerciseName}
+    placeholder="name of the exercise"
+    onChange= { (event)=> setExerciseName(event.target.value) } />
 
 
- </div> )
+    <select  // select requires <option> NOT li and ul
+     value={primaryMuscle}
+     onChange= {  (event)=> setPrimaryMuscle(event.target.value) }    >
+     <option  value=""> {"select muscle"} </option>
+     {muscles.map( muscle=>(
+         <option key={muscle} value={muscle} >   {/* scroll wheel form */}
+             {muscle}
+        </option> ))}
+    </select>
+    <button onClick={handleAddExercise}>
+        add an exercise
+     </button>
 
 
 
@@ -80,9 +125,65 @@ return(
 
 
 
+ </div>
 
-
+    )
 
 
    }
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
