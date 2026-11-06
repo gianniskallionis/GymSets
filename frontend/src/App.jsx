@@ -7,7 +7,7 @@ const muscles=[
 
 
 function App(){
-
+const [workoutId,setWorkoutId]=useState("");
 const [exerciseName,setExerciseName]=useState("");
 const [primaryMuscle,setPrimaryMuscle]=useState("");
 const [exercises,setExercises]=useState([]);
@@ -49,8 +49,21 @@ const handleRegister=  ()=> {
             //             java dto name: jsx var name         we send an empty list   fetch closes before .then
             .then(fetch_answer  =>{return fetch_answer.json();} ). // we only use the body from the whole answer(status,header,body)
             then(clean_data => {setExercises([...exercises,clean_data]) // on the list exercises we add the clean_data exercise
-                setExerciseName("");} ) // we add the exercise to the list,
+                setExerciseName("");} ) // the exercise now gets wiped clean
                }}
+
+
+const handleCreateWorkout = ()=> {
+    const year=new Date().getFullYear();
+    const month= new Date().getMonth()+1;
+    const day= new Date().getDate();
+
+    fetch("http://localhost:8080/workouts",
+    {method:"POST",headers:{"Content-Type":"application/json", "Authorization": `Bearer ${token}`  },
+    body:JSON.stringify({year,month,day } ) } )
+    .then( fetch_answer =>{return fetch_answer.json();}   ) // the clean data that the 1st then returns is a workoutResponse , it has id
+    .then(clean_data => {setWorkoutId(clean_data.id);console.log(clean_data);}  )
+    }
 
 
 
@@ -117,6 +130,9 @@ return(
     <button onClick={handleAddExercise}>
         add an exercise
      </button>
+     <button onClick={handleCreateWorkout}>
+         Start a workout
+         </button>
 
 
 
