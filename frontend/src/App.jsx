@@ -20,6 +20,7 @@ const [kg,setKg]=useState("");
 const [reps,setReps]=useState("");
 const [workoutSetId,setWorkoutSetId]=useState("");
 const [workoutsList,setWorkoutsList]=useState([]);
+const [loginFlag,setLoginFlag]=useState("");
 
 
 /**the header "Content-Type": "application/json" means the type of content(body) of what we send is JSON
@@ -53,9 +54,16 @@ const handleRegister=  ()=> {
      fetch("http://localhost:8080/auth/login",
          {method:"POST", headers:{ "Content-Type": "application/json"},
          body: JSON.stringify({username,password})  })  .
-         then( fetch_answer =>{return fetch_answer.json();}     ). //
-         then(dto_response => {setToken(dto_response.token); // dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx
-             console.log(dto_response.token) ;
+         then(
+             fetch_answer =>{ // we only use ( && ) on the return part, on the functions we use if
+                 if( !fetch_answer.ok ){ setLoginFlag("true");return ;  }
+                 else{setLoginFlag("false");return fetch_answer.json();}
+                }    )
+         .then(dto_response => { console.log(dto_response);
+             if(dto_response){
+             setToken(dto_response.token); // dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx
+             console.log(dto_response.token) ;}
+             else{console.log("dto response not found")}
              });
      }
 
@@ -150,7 +158,7 @@ return(
     <button onClick={handleLogin}>
         Login
     </button>
-    <div> { token && <p>Logged in </p> } </div>
+    <div> { token && <p>Logged in </p> } </div>   <div>{loginFlag==="true" && <p> Username or Password is incorrect</p>} </div>
     {/* this is as if you type: if(token){printf logged in},if var is "" it is false, so if its true then it isn't empty */}
         <ul> {/*ul=list , li=item of list            */}
                  {exercisesList.map(ex=> <li key={ex.id} >            {ex.name}       </li> ) }
