@@ -102,7 +102,7 @@ const handleAddSet= ()=>{
  // if any requirement is not met we send nothing
  }
 
-
+/* gets all the workouts of the user */
 const handleWorkoutsList= ()=> {
 fetch("http://localhost:8080/workouts",
     { method:"GET", headers:{"Authorization":`Bearer ${token}` } } ).
@@ -198,10 +198,14 @@ return(
          show all workouts
          </button>
 
-
+ { workoutId &&  <p> {workoutId}    </p>     } {/* if the workoutId is valid */}
 <ul>
 
-    { workoutsList.map(wk=> <li key={wk.id}>  {wk.id} {wk.year}-{wk.month}-{wk.day}  </li>                    )}
+  {/* we use ()=> so onClick doesnt automatically start without the ()=> the functs starts automatically*/}
+    { workoutsList.map(wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
+        {wk.id} {wk.year}-{wk.month}-{wk.day}
+
+        </li>    )}
 
 </ul>
 
