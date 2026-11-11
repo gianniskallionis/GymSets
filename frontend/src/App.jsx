@@ -1,9 +1,35 @@
 import {useEffect,useState } from "react";
 
+
 // for a dynamic list (that changes) you need an id for each element
 const muscles=[
     'TRAPS', 'RHOMBOIDS', 'LATS', 'ERECTORS','FRONT_DELTS','SIDE_DELTS','REAR_DELTS','BICEPS',
         'TRICEPS', 'FOREARMS', 'CHEST', 'ABS', 'QUADS', 'GLUTES', 'HAMSTRINGS', 'CALVES', 'ADDUCTORS']
+
+const urlHost=import.meta.env.VITE_LOCALURL;
+
+/* headers look like a map "content-type" is the key, "application/json" is the value */
+async function fetcher( path,method,body,token){
+    const headers={};
+    if(body){headers["Content-Type"]= "application/json" }
+    if (token){ headers["Authorization"]= `Bearer ${token}`}
+
+     const fetch_answer= await   fetch(`${urlHost}${path}`,
+       { method:method,headers:headers,   /* we can use just method,headers , i choose the method:method for simplicity */
+        body: body  ? JSON.stringify(body) : undefined } )              /*    fetch_method: parameter_method */
+
+        if (!fetch_answer.ok){
+            const fetch_answer_text= await fetch_answer.text() ;    /*  we have to wait for the fetch_answer.text() */
+            throw new Error("fetch's answer ok failed reason: "+ fetch_answer_text  );
+            }
+        else { return  await fetch_answer.json(); }  /* returns the dto response (json() needs await ) */
+   }
+
+
+
+
+
+
 
 
 function App(){
@@ -35,8 +61,21 @@ we  keep only the body with .json() and we name it dto_response
 dto_response == JS object that is same as DTO response object
 
  */
-const handleRegister=  ()=> {
-    fetch("http://localhost:8080/auth/register" ,
+const handleRegister= async ()=> {
+    try{
+        const dto_response = await fetcher("/auth/register","POST",{username,password},"")
+            if (dto_response){console.log(dto_response);}
+            else{console.log("dto response not found")}
+                      }
+                     catch(e){console.error(e)} }
+
+
+
+
+
+
+
+     /*  legacy code fetch("http://localhost:8080/auth/register" ,
         { method:"POST", headers:{ "Content-Type": "application/json" } ,
         body: JSON.stringify({username,password})     }  ).
         then(  (fetch_answer)=>{console.log(fetch_answer)}    ); }
@@ -46,12 +85,21 @@ const handleRegister=  ()=> {
     example.    username:giannis. same goes for password. we type password but its password:1234 or smth */
 
 
- /**  fetch sends username and password  to /auth/login . the first then  takes the answer(status, headers, body)
+ /*   fetch sends username and password  to /auth/login . the first then  takes the answer(status, headers, body)
  keeps only its body and turns it into json
  the second then  takes the result which is {token:...} and saves it in the state and shows it on console
   */
- const handleLogin= ()=>{
-     fetch("http://localhost:8080/auth/login",
+  const handleLogin= async ()=>{
+     try {                         /*          path       ,method, body                         */
+         const dto_response = await fetcher("/auth/login","POST",{username,password},"")
+            if(dto_response){
+                setToken(dto_response.token); } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
+                else{console.log("dto response not found")}
+          }
+         catch(e){console.error(e);setLoginFlag("true")} }
+
+
+      /* fetch("http://localhost:8080/auth/login",
          {method:"POST", headers:{ "Content-Type": "application/json"},
          body: JSON.stringify({username,password})  })  .
          then(
@@ -62,10 +110,10 @@ const handleRegister=  ()=> {
          .then(dto_response => { console.log(dto_response);
              if(dto_response){
              setToken(dto_response.token); // dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx
-             console.log(dto_response.token) ;}
+             }
              else{console.log("dto response not found")}
-             });
-     }
+             });    legacy code, here to help remember skeleton syntax, to be removed before shipment        */
+
 
 /** it creates an exercise
   the header "Authorization": 'Bearer ${token}' says: authorization : eyjXXXXXXXXXXX
@@ -73,7 +121,19 @@ const handleRegister=  ()=> {
 
 
   */
- const handleAddExercise= ()=>{if(primaryMuscle) { // if primaryMuscle is not empty
+ const handleAddExercise= async ()=>{if(primaryMuscle) { // if primaryMuscle is not empty
+     try {                          /* fetcher takes body ready so body has to be in the form  Dto_name:name_given             */
+        const dto_response= await fetcher("/exercises","POST", {name:exerciseName,primaryMuscle,listOfSecondaries:[] },token)
+            if (dto_response && token ){
+                setExercisesList([...exercisesList,dto_response]);
+                setExerciseName("");
+                }
+         }
+        catch (e){console.error(e);} } }
+
+
+
+            /*
      fetch("http://localhost:8080/exercises",
          {method:"POST",headers:{ "Content-Type":"application/json","Authorization":`Bearer ${token}`},
           body:JSON.stringify({name:exerciseName,primaryMuscle,listOfSecondaries:[]})   })
@@ -81,43 +141,76 @@ const handleRegister=  ()=> {
             .then(fetch_answer  =>{return fetch_answer.json();} ). // we only use the body from the whole answer(status,header,body)
             then(dto_response   => {setExercisesList([...exercisesList,dto_response]) // on the list exercises we add the dto_response exercise
                 setExerciseName("");} ) //  exerciseName now is empty
-               }}
+               }}*/
 
 
-const handleCreateWorkout = ()=> {
+const handleCreateWorkout=async ()=> {
     const year=new Date().getFullYear();
     const month= new Date().getMonth()+1;
     const day= new Date().getDate();
-
+    try{
+        const dto_response= await fetcher("/workouts","POST",{year,month,day },token  )
+            if(dto_response &&token){
+                setWorkoutId(dto_response.id);
+                console.log(dto_response);
+                }
+        }
+          catch (e){console.error(e);} }
+    /*
     fetch("http://localhost:8080/workouts",
     {method:"POST",headers:{"Content-Type":"application/json", "Authorization": `Bearer ${token}`  },
     body:JSON.stringify({year,month,day } ) } )
     .then( fetch_answer =>{return fetch_answer.json();}   ) // the clean data that the 1st then returns is a workoutResponse , it has id
     .then(dto_response => {setWorkoutId(dto_response.id);console.log(dto_response);}  )
-    }
+    } */
 
 /** to add a set to a workout we need : the exercise(id) the reps and the kg , we already have them as variables  */
-const handleAddSet= ()=>{
+const handleAddSet= async()=>{
+    try {
+         const dto_response= await fetcher(`/workouts/${workoutId}/sets`,"POST",
+             { exerciseId:Number(selectedExerciseId),kg:Number(kg),reps:Number(reps) },token  )
+             if (selectedExerciseId && kg && reps && workoutId && dto_response  && token){
+                    console.log(dto_response);
+                    setKg("");
+                    setReps("");
+                 }
+        }
+        catch (e){console.error(e);} }
+
+
+        /*
 // we check if all 3 requirements exist correctly
-  if (selectedExerciseId && kg && reps){
+  if (selectedExerciseId && kg && reps && workoutId){
     fetch(`http://localhost:8080/workouts/${workoutId}/sets`,
         {method:"POST",headers:{ "Content-Type":"application/json","Authorization":`Bearer ${token}`},
          body:JSON.stringify({ exerciseId:Number(selectedExerciseId),kg:Number(kg),reps:Number(reps) })   })     // matches CreateWorkoutSetRequest params
         .then(fetch_answer=> {return fetch_answer.json();}) // fetch_answer takes some time to come so we have to return it as a function cuz we dont have it ready
-        .then ( dto_response=>{console.log(dto_response)}  )
-        setKg("");setReps("");  // emptying out the input fields after submit
+        .then ( dto_response=>{console.log(dto_response); setKg("");setReps("");  })// emptying out the input fields after submit )
+
       }
  // if any requirement is not met we send nothing
- }
+ } */
 
 /* gets all the workouts of the user */
-const handleWorkoutsList= ()=> {
+const handleWorkoutsList=   async ()=> {
+    try {
+             const dto_response= await fetcher("/workouts","GET",undefined,token  )
+                 if ( dto_response  && token){
+                        setWorkoutsList(dto_response)
+                        console.log(dto_response);
+                                }
+            }
+            catch (e){console.error(e);} }
+
+
+
+   /*
 fetch("http://localhost:8080/workouts",
     { method:"GET", headers:{"Authorization":`Bearer ${token}` } } ).
     then( fetch_answer => {return fetch_answer.json();} ).
     then(dto_response=>{setWorkoutsList(dto_response)
         console.log(dto_response)})
-    }
+    }  */
 
 
 
@@ -130,7 +223,7 @@ fetch("http://localhost:8080/workouts",
 
 
 
- useEffect( ()=> { if(token){
+  useEffect( ()=> { if(token){
 fetch("http://localhost:8080/exercises",
          { method:"GET", headers: {"Authorization":`Bearer ${token}` }   }  ).
          then(fetch_answer => {return fetch_answer.json(); }).// fetch_answer is the whole answer (status,header,body). with .json u open the body and make it into json
