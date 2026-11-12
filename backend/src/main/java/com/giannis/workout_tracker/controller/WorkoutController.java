@@ -98,8 +98,22 @@ public class WorkoutController {
         // we  find the Workout  object from the id given as a parameter.  If not found, throws exception with message
        return returnWorkout(id,authentication.getName())     .volume();
 
-
     }
+
+    @GetMapping ("/{id}/sets")
+    public List<WorkoutSetResponse> getSetsOfWorkout (@PathVariable Long id,Authentication authentication ){
+        List <WorkoutSetResponse> listOfSets= new ArrayList<>(); /*we create an empty list that we will put Sets in */
+        for(WorkoutSet S:   returnWorkout(id, authentication.getName()).getSets()  )    { /*WE get the workout of the id and we get every set of it  */
+                WorkoutSetResponse sr=new WorkoutSetResponse(S.getId(),S.getExercise().getId(),S.getKg(),S.getReps());
+                listOfSets.add(sr);
+        }
+            return listOfSets;
+    }
+
+
+
+
+
 
 
     @GetMapping

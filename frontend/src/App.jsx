@@ -40,6 +40,7 @@ const [workoutSetId,setWorkoutSetId]=useState("");
 const [workoutsList,setWorkoutsList]=useState([]);
 const [loginFlag,setLoginFlag]=useState("");
 const [workoutMsg,setWorkoutMsg]=useState("");
+const [date,setDate]=useState("");
 
 
 /**the header "Content-Type": "application/json" means the type of content(body) of what we send is JSON
@@ -92,11 +93,18 @@ const handleRegister= async ()=> {
 
 
 const handleCreateWorkout=async ()=> {
-    const year=new Date().getFullYear();
-    const month= new Date().getMonth()+1;
-    const day= new Date().getDate();
-    if ( workoutId){
-        setWorkoutMsg("you already started a workout"); return; }
+    let year=new Date().getFullYear();
+    let month= new Date().getMonth()+1;
+    let day= new Date().getDate();
+
+    if ( workoutId){ setWorkoutMsg("you already started a workout"); return; }
+      if(date){   /* the date is given as "2020-1-1" */       /*Check whether the date is custom or today's */
+                    const dt=date.split("-");
+                    year=Number(dt[0]);
+                    month=Number(dt[1]);
+                    day=Number(dt[2]);
+                    }
+
     try{
         const dto_response= await fetcher("/workouts","POST",{year,month,day },token  )
             if(dto_response && token){
@@ -243,6 +251,7 @@ return(
 {workoutId && <button onClick={handleLeaveWorkout}> leave workout </button>  }
 {/*IF workoutId exists then we show the button    */}
 {  workoutMsg && <p>  {workoutMsg} </p> }   {/*IF workoutMsg is NOT empty we show the message:"you already started a workout"       */}
+<input  type ="date" value={date} placeholder="date" onChange ={ (event)=>setDate(event.target.value) }  />
 
 
 

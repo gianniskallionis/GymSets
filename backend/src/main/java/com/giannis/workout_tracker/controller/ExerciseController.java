@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController // the return goes back as Json, to the client
 @RequestMapping("/exercises") // the methods of the class share the common /Exercise in the link
-public class ExerciseController {
+public class    ExerciseController {
 
     private final ExerciseRepository exerciseRepository;  // the repository we save and take from the data we use
 
