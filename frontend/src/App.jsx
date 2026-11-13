@@ -41,6 +41,7 @@ const [workoutsList,setWorkoutsList]=useState([]);
 const [loginFlag,setLoginFlag]=useState("");
 const [workoutMsg,setWorkoutMsg]=useState("");
 const [date,setDate]=useState("");
+const [setsList,setSetsList]=useState([]);
 
 
 /**the header "Content-Type": "application/json" means the type of content(body) of what we send is JSON
@@ -53,6 +54,8 @@ ex: createExerciseRequest needs(name,primaryMuscle,list of secondaries) in the b
 in the first then we receive the answer of the server in fetch_answer ( status,headers,body )
 we  keep only the body with .json() and we name it dto_response
 dto_response == JS object that is same as DTO response object
+
+EVERY HANDLER COMMUNICATES 1-1 WITH A BACKEND ENDPOINT FUNCTION
 
  */
 const handleRegister= async ()=> {
@@ -104,7 +107,6 @@ const handleCreateWorkout=async ()=> {
                     month=Number(dt[1]);
                     day=Number(dt[2]);
                     }
-
     try{
         const dto_response= await fetcher("/workouts","POST",{year,month,day },token  )
             if(dto_response && token){
@@ -116,17 +118,17 @@ const handleCreateWorkout=async ()=> {
 
 
 /** to add a set to a workout we need : the exercise(id) the reps and the kg , we already have them as variables  */
-const handleAddSet= async()=>{
+const handleAddSet= async()=>{if (selectedExerciseId && kg && reps && workoutId   && token){
     try {
          const dto_response= await fetcher(`/workouts/${workoutId}/sets`,"POST",
              { exerciseId:Number(selectedExerciseId),kg:Number(kg),reps:Number(reps) },token  )
-             if (selectedExerciseId && kg && reps && workoutId && dto_response  && token){
                     console.log(dto_response);
                     setKg("");
                     setReps("");
-                 }
+                     await handleSetsList();
+
         }
-        catch (e){console.error(e);} }
+        catch (e){console.error(e);} } }
 
 
 /* gets all the workouts of the user */
@@ -150,14 +152,28 @@ const handleLeaveWorkout= ()=> {
 
 
 
+async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWorkout
+    getSetsOfWorkout asks for (ID,Authentication) and it returns a list with all of the sets of the workout
+    we give id from ${workoutId} and authorization from token */
+    if(!workoutId){setSetsList([]); return;}
+    try{
+    const dto_response= await fetcher(`/workouts/${workoutId}/sets`,"GET",undefined,token)
+        if(dto_response && workoutId){ setSetsList(dto_response);  }
+        }
+        catch(e){console.error(e);}  }
+
+
+
+    useEffect ( () => { if(workoutId){
+            handleSetsList();     /*Everytime a workout changes we load the List of its sets */
+          }else{setSetsList([]); }
+    },[workoutId])
 
 
 
 
 
-
-
-  useEffect( ()=> { if(token){
+  useEffect( ()=> { if(token){  /*useEffect=== When THIS [token] changes , DO:  whatever is within {} */
       async function startFetching(){
           try{
           const dto_response=  await fetcher("/exercises","GET",undefined,token)
@@ -252,6 +268,13 @@ return(
 {/*IF workoutId exists then we show the button    */}
 {  workoutMsg && <p>  {workoutMsg} </p> }   {/*IF workoutMsg is NOT empty we show the message:"you already started a workout"       */}
 <input  type ="date" value={date} placeholder="date" onChange ={ (event)=>setDate(event.target.value) }  />
+
+
+<ul>
+    {   setsList.map (set =>  /* we find the exercise                            .we get its name         */
+        <li key={set.setId}> {exercisesList.find( (e)=> e.id=== set.exerciseId )  ?.name } kg:{set.kg} reps:{set.reps}  </li>  )   } </ul>
+                                              {/* (? =if it doesnt find name it returns undefined) */}
+
 
 
 
