@@ -113,6 +113,7 @@ const handleCreateWorkout=async ()=> {
             if(dto_response && token){
                 setWorkoutId(dto_response.id);
                 console.log(dto_response);
+                handleWorkoutsList(); /*everytime i create a workout the list of workouts  gets updated */
                 }
         }
           catch (e){console.error(e);} }
@@ -132,12 +133,12 @@ const handleAddSet= async()=>{if (selectedExerciseId && kg && reps && workoutId 
         catch (e){console.error(e);} } }
 
 
-/* gets all the workouts of the user */
-const handleWorkoutsList=   async ()=> {
+/* gets all the workouts(List) of the user */
+async function handleWorkoutsList()   {
     try {
              const dto_response= await fetcher("/workouts","GET",undefined,token  )
                  if ( dto_response  && token){
-                        setWorkoutsList(dto_response)
+                         setWorkoutsList(dto_response)
                         console.log(dto_response);
                                 }
             }
@@ -170,6 +171,11 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
     }}  ;
 
 
+        useEffect ( ()=> { if (token){
+            handleWorkoutsList();
+            }
+            },[token]) /*everytime a user LOGS IN  it  returns the list of workouts */
+
 
 
     useEffect ( () => { if(workoutId){
@@ -180,7 +186,7 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
 
 
 
-
+ {/*SHOWS THE EXERCISES OF THE USER EVERYTIME A LOGIN OCCURS */}
   useEffect( ()=> { if(token){  /*useEffect=== When THIS [token] changes , DO:  whatever is within {} */
       async function startFetching(){
           try{
@@ -258,17 +264,14 @@ return(
      add a set
      </button>
 
-     <button onClick={handleWorkoutsList}>
-         show all workouts
-         </button>
 
+
+ {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE  */}
  { workoutId &&  <p> {workoutId}    </p>     } {/* if the workoutId is valid */}
 <ul>
-
   {/* we use ()=> so onClick doesnt automatically start without the ()=> the functs starts automatically*/}
-    { workoutsList.map(wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
+    { workoutsList.map(  wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
         {wk.id} {wk.year}-{wk.month}-{wk.day}
-
         </li>    )}
 </ul>
 
@@ -283,12 +286,16 @@ return(
 
 
 
-{/* PRINTS THE LIST OF THE SETS OF AN EXERCISE  */}
+{/* SHOWS THE LIST OF THE SETS OF AN EXERCISE  */}
 <ul>
     {   setsList.map (set =>  /* we find the exercise                            .we get its name         */
         <li key={set.setId}> {exercisesList.find( (e)=> e.id=== set.exerciseId )  ?.name } kg:{set.kg} reps:{set.reps}
             <button onClick={()=>handleDeleteSet(set)}> Delete set </button>     </li>  )   } </ul>
         {/*we use()=> so the function starts only when activated */}
+
+
+
+
 
 
 
