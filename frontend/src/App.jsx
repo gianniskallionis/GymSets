@@ -21,7 +21,9 @@ async function fetcher( path,method,body,token){
             const fetch_answer_text= await fetch_answer.text() ;    /*  we have to wait for the fetch_answer.text() */
             throw new Error("fetch's answer ok failed reason: "+ fetch_answer_text  );
             }
-        else { return  await fetch_answer.json(); }  /* returns the dto response (json() needs await ) */
+            const answer_text = await fetch_answer.text(); // if body = empty (delete), we send 0 .else we send json(body)
+            if (!answer_text){return 0;}
+            return  JSON.parse(answer_text);
    }
 
 function App(){
@@ -36,7 +38,6 @@ const [workoutId,setWorkoutId]=useState("");
 const [selectedExerciseId,setSelectedExerciseId]=useState("");
 const [kg,setKg]=useState("");
 const [reps,setReps]=useState("");
-const [workoutSetId,setWorkoutSetId]=useState("");
 const [workoutsList,setWorkoutsList]=useState([]);
 const [loginFlag,setLoginFlag]=useState("");
 const [workoutMsg,setWorkoutMsg]=useState("");
@@ -148,19 +149,26 @@ const handleLeaveWorkout= ()=> {
        setWorkoutMsg("");} // we make  the message("you already started a workout") disappear
 
 
-
-
-
-
 async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWorkout
     getSetsOfWorkout asks for (ID,Authentication) and it returns a list with all of the sets of the workout
     we give id from ${workoutId} and authorization from token */
     if(!workoutId){setSetsList([]); return;}
-    try{
+    try{ /*the fetcher calls the function that returns the list of the sets  */
     const dto_response= await fetcher(`/workouts/${workoutId}/sets`,"GET",undefined,token)
         if(dto_response && workoutId){ setSetsList(dto_response);  }
         }
         catch(e){console.error(e);}  }
+
+
+  async function handleDeleteSet(set) { console.log(set)
+    if (workoutId && set.setId){
+     try{                             // the delete set function in backend is void so we dont have dto_response
+     await fetcher(`/sets/${set.setId}`,"DELETE",undefined,token);
+    /*By calling the backend (via fetcher) we already have deleted the set so we can get all the sets from handleSetsList */
+   await handleSetsList(); /* handleSetsList shows the new list on the screen */}
+             catch(e){console.error(e);}
+    }}  ;
+
 
 
 
@@ -264,16 +272,23 @@ return(
         </li>    )}
 </ul>
 
+{/*LEAVE WORKOUT MSG when Workout active AND  message that you cant start  the workout twice  */}
 {workoutId && <button onClick={handleLeaveWorkout}> leave workout </button>  }
 {/*IF workoutId exists then we show the button    */}
 {  workoutMsg && <p>  {workoutMsg} </p> }   {/*IF workoutMsg is NOT empty we show the message:"you already started a workout"       */}
+
+
+{/*THE DATE OF THE WORKOUT  */}
 <input  type ="date" value={date} placeholder="date" onChange ={ (event)=>setDate(event.target.value) }  />
 
 
+
+{/* PRINTS THE LIST OF THE SETS OF AN EXERCISE  */}
 <ul>
     {   setsList.map (set =>  /* we find the exercise                            .we get its name         */
-        <li key={set.setId}> {exercisesList.find( (e)=> e.id=== set.exerciseId )  ?.name } kg:{set.kg} reps:{set.reps}  </li>  )   } </ul>
-                                              {/* (? =if it doesnt find name it returns undefined) */}
+        <li key={set.setId}> {exercisesList.find( (e)=> e.id=== set.exerciseId )  ?.name } kg:{set.kg} reps:{set.reps}
+            <button onClick={()=>handleDeleteSet(set)}> Delete set </button>     </li>  )   } </ul>
+        {/*we use()=> so the function starts only when activated */}
 
 
 
