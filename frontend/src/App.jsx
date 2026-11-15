@@ -1,5 +1,5 @@
 import {useEffect,useState } from "react";
-
+import ExercisesComp from "./components/ExerciseList.jsx"
 
 // for a dynamic list (that changes) you need an id for each element
 const muscles=[
@@ -147,8 +147,8 @@ async function handleWorkoutsList()   {
 
 const handleLeaveWorkout= ()=> {
     setWorkoutId("");  // we make the workoutId empty
-       setWorkoutMsg("");} // we make  the message("you already started a workout") disappear
-
+       setWorkoutMsg(""); // we make  the message("you already started a workout") disappear
+           setSetsList([]) ; } // we empty the list of sets of the workout
 
 async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWorkout
     getSetsOfWorkout asks for (ID,Authentication) and it returns a list with all of the sets of the workout
@@ -180,7 +180,7 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
 
     useEffect ( () => { if(workoutId){
             handleSetsList();     /*Everytime a workout changes we load the List of its sets */
-          }else{setSetsList([]); }
+           }
     },[workoutId])
 
 
@@ -221,10 +221,10 @@ return(
     </button>
     <div> { token && <p>Logged in </p> } </div>   <div>{loginFlag==="true" && <p> Username or Password is incorrect</p>} </div>
     {/* this is as if you type: if(token){printf logged in},if var is "" it is false, so if its true then it isn't empty */}
-        <ul> {/*ul=list , li=item of list            */}
-                 {exercisesList.map(ex=> <li key={ex.id} >            {ex.name}       </li> ) }
-        </ul> {/*  <li attribute > content </li>     */}
-              {/* exercises= array, map=loop(like for each that returns a new list  ), ex is the element of the exercises array           */}
+
+
+      <ExercisesComp exercisesList={exercisesList} />
+
     <input
     type="text"
     value={exerciseName}
