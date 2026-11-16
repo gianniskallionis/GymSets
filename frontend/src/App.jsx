@@ -1,10 +1,9 @@
 import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
+import ExerciseFormComp from "./components/ExerciseForm.jsx"
 
 // for a dynamic list (that changes) you need an id for each element
-const muscles=[
-    'TRAPS', 'RHOMBOIDS', 'LATS', 'ERECTORS','FRONT_DELTS','SIDE_DELTS','REAR_DELTS','BICEPS',
-        'TRICEPS', 'FOREARMS', 'CHEST', 'ABS', 'QUADS', 'GLUTES', 'HAMSTRINGS', 'CALVES', 'ADDUCTORS']
+
 
 const urlHost=import.meta.env.VITE_LOCALURL;
 
@@ -32,8 +31,7 @@ const [username,setUsername]= useState(""); // we use useState so changes on the
 const [password,setPassword]= useState("");
 const [token,setToken]=useState("");
 const [exercisesList,setExercisesList]=useState([]);
-const [primaryMuscle,setPrimaryMuscle]=useState("");
-const [exerciseName,setExerciseName]=useState("");
+
 const [workoutId,setWorkoutId]=useState("");
 const [selectedExerciseId,setSelectedExerciseId]=useState("");
 const [kg,setKg]=useState("");
@@ -84,16 +82,15 @@ const handleRegister= async ()=> {
   the header "Authorization": 'Bearer ${token}' says: authorization : eyjXXXXXXXXXXX
   it shows ur token to authenticate you . we need the header authorization in every handler except register/login
   */
- const handleAddExercise= async ()=>{if(primaryMuscle) { // if primaryMuscle is not empty
+ async function handleAddExercise(payload){
      try {                          /* fetcher takes body ready so body has to be in the form  Dto_name:name_given             */
-        const dto_response= await fetcher("/exercises","POST", {name:exerciseName,primaryMuscle,listOfSecondaries:[] },token)
+        const dto_response= await fetcher("/exercises","POST", payload,token)
             if (dto_response && token ){
                 setExercisesList([...exercisesList,dto_response]);
-                setExerciseName("");
-                setPrimaryMuscle("");
+                return true;
                 }
          }
-        catch (e){console.error(e);} } }
+        catch (e){console.error(e);}return false;  }
 
 
 const handleCreateWorkout=async ()=> {
@@ -223,27 +220,15 @@ return(
     {/* this is as if you type: if(token){printf logged in},if var is "" it is false, so if its true then it isn't empty */}
 
 
-      <ExercisesComp exercisesList={exercisesList} />
+      <ExercisesComp exercisesListProp={exercisesList} />
+{/*    function      variable( argument of function) =value of variable   */}
+      <ExerciseFormComp onAddExercise={handleAddExercise} />
+  {/*  onAddExercise is the way handleAddExercise goes from app.jsx to ExerciseForm.jsx
+      onAddExercise is the second name for the same  function (handleAddExercise), the same function is known as onAddExercise by ExerciseForm
+      onAddExercise is a prop(function argument )  that is passed from app->ExerciseForm. Because its a function its called callback
+          app->form->onADD->app(do on handle)-> results                                                                                                                                  */}
 
-    <input
-    type="text"
-    value={exerciseName}
-    placeholder="name of the exercise"
-    onChange= { (event)=> setExerciseName(event.target.value) } />
 
-
-    <select  // select requires <option> also select creates a dropdown menu
-     value={primaryMuscle} // what is shown in the dropdown menu , comes from primaryMuscle
-     onChange= {  (event)=> setPrimaryMuscle(event.target.value) }    >
-     <option  value=""> {"select muscle"} </option>
-     {muscles.map( muscle=>(  // creates an option for every item in the array muscles
-         <option key={muscle} value={muscle} >
-             {muscle}
-        </option> ))}
-    </select>
-    <button onClick={handleAddExercise}>
-        add an exercise
-     </button>
      <button onClick={handleCreateWorkout}>
          Start a workout
          </button>
