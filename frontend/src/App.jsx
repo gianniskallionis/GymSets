@@ -1,7 +1,7 @@
 import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
-
+import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 // for a dynamic list (that changes) you need an id for each element
 
 
@@ -27,8 +27,7 @@ async function fetcher( path,method,body,token){
 
 function App(){
 
-const [username,setUsername]= useState(""); // we use useState so changes on the username(only with setUsername) show on screen instantly
-const [password,setPassword]= useState("");
+
 const [token,setToken]=useState("");
 const [exercisesList,setExercisesList]=useState([]);
 
@@ -57,21 +56,21 @@ dto_response == JS object that is same as DTO response object
 EVERY HANDLER COMMUNICATES 1-1 WITH A BACKEND ENDPOINT FUNCTION
 
  */
-const handleRegister= async ()=> {
+const handleRegister= async (payload)=> {
     try{
-        const dto_response = await fetcher("/auth/register","POST",{username,password},"")
-            if (dto_response){console.log(dto_response);}
-            else{console.log("dto response not found")}
+        const dto_response = await fetcher("/auth/register","POST",payload,"")
+            if (dto_response){console.log(dto_response);return true;}
+            else{console.log("dto response not found");return false;}
                       }
-                     catch(e){console.error(e)} }
+                     catch(e){console.error(e)}return false; }
 
  /*   fetch sends username and password  to /auth/login . the first then  takes the answer(status, headers, body)
  keeps only its body and turns it into json
  the second then  takes the result which is {token:...} and saves it in the state and shows it on console
   */
-  const handleLogin= async ()=>{
+  const handleLogin= async (payload)=>{
      try {                         /*          path       ,method, body                         */
-         const dto_response = await fetcher("/auth/login","POST",{username,password},"")
+         const dto_response = await fetcher("/auth/login","POST",payload,"")
             if(dto_response){
                 setToken(dto_response.token);setLoginFlag("false") } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
                 else{console.log("dto response not found")}
@@ -196,29 +195,14 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
 
 
 return(
- <div>
-     <input
-     type="text" // the types are: text,email,password,number,tel,search,url
-     value={username}
-     onChange={  (event)=> setUsername(event.target.value)   }
-     placeholder="Username"
-     />
-    <input
-    type="password"
-    value={password}
-    placeholder="password"
-    onChange={ (event)=> setPassword(event.target.value)   }
-    />
-    <button onClick={handleRegister}>
-        Register
-    </button>
 
-    <button onClick={handleLogin}>
-        Login
-    </button>
-    <div> { token && <p>Logged in </p> } </div>   <div>{loginFlag==="true" && <p> Username or Password is incorrect</p>} </div>
-    {/* this is as if you type: if(token){printf logged in},if var is "" it is false, so if its true then it isn't empty */}
 
+
+
+<div>
+
+        <RegisterComp onRegister={handleRegister} />
+        <LoginComp onLogin={handleLogin} token={token} loginFlag={loginFlag}  />
 
       <ExercisesComp exercisesListProp={exercisesList} />
 {/*    function      variable( argument of function) =value of variable   */}

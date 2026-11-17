@@ -20,6 +20,7 @@ setPrimaryMuscle("");
 setSecondaryMuscles([]);}
     }}
 
+
 const handleAddSecondary = ()=>{
     if(currentSecondary && !secondaryMuscles.includes(currentSecondary)){
         setSecondaryMuscles([...secondaryMuscles,currentSecondary]);
