@@ -7,6 +7,7 @@ function  ExerciseFormComp({onAddExercise}) {
 const [exerciseName,setExerciseName]=useState("");
 const [primaryMuscle,setPrimaryMuscle]=useState("");
 const [secondaryMuscles,setSecondaryMuscles]=useState([]);
+const [currentSecondary,setCurrentSecondary]=useState("");
 
 const handleSubmit= async ()=>{
  if(primaryMuscle){
@@ -17,8 +18,14 @@ if (addExercise_response){
 setExerciseName("");
 setPrimaryMuscle("");
 setSecondaryMuscles([]);}
-
     }}
+
+const handleAddSecondary = ()=>{
+    if(currentSecondary && !secondaryMuscles.includes(currentSecondary)){
+        setSecondaryMuscles([...secondaryMuscles,currentSecondary]);
+        setCurrentSecondary("");
+        }
+    }
 
 
 
@@ -40,6 +47,26 @@ return (<div>
              {muscle}
         </option> ))}
     </select>
+
+    <select value={currentSecondary}  //inside the select we only draw , no logic
+    onChange = { (event)=> setCurrentSecondary(event.target.value) } >
+    <option value=""> {"select secondary muscles"} </option>
+   {muscles.map( muscle=>(                                                  // creates an option for every item in the array muscles
+            <option key={muscle} value={muscle}> {muscle}  </option>  // the .map() draws the 17 muscles
+         ))}   {/* inside the map we only draw, no logic  */}
+
+      </select>
+
+    <button onClick={handleAddSecondary}>
+        add a secondary muscle
+        </button>
+       <ul>
+           {secondaryMuscles.map(secM=>   (<li key={secM}>  {secM} </li> )    )  }
+        </ul>
+
+
+
+
     <button onClick={handleSubmit}>
         add an exercise
      </button>
