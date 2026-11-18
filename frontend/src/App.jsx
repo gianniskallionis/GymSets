@@ -2,6 +2,7 @@ import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
 import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
+import {AddSetComp,ShowSetsComp} from "./components/SetsForm.jsx"
 // for a dynamic list (that changes) you need an id for each element
 
 
@@ -27,14 +28,9 @@ async function fetcher( path,method,body,token){
 
 function App(){
 
-
 const [token,setToken]=useState("");
 const [exercisesList,setExercisesList]=useState([]);
-
 const [workoutId,setWorkoutId]=useState("");
-const [selectedExerciseId,setSelectedExerciseId]=useState("");
-const [kg,setKg]=useState("");
-const [reps,setReps]=useState("");
 const [workoutsList,setWorkoutsList]=useState([]);
 const [loginFlag,setLoginFlag]=useState("");
 const [workoutMsg,setWorkoutMsg]=useState("");
@@ -72,10 +68,10 @@ const handleRegister= async (payload)=> {
      try {                         /*          path       ,method, body                         */
          const dto_response = await fetcher("/auth/login","POST",payload,"")
             if(dto_response){
-                setToken(dto_response.token);setLoginFlag("false") } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
-                else{console.log("dto response not found")}
+                setToken(dto_response.token);setLoginFlag("false");return true; } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
+                else{console.log("dto response not found");return false;}
           }
-         catch(e){console.error(e);setLoginFlag("true")} }
+         catch(e){console.error(e);setLoginFlag("true")}return false; }
 
 /** it creates an exercise
   the header "Authorization": 'Bearer ${token}' says: authorization : eyjXXXXXXXXXXX
@@ -116,17 +112,16 @@ const handleCreateWorkout=async ()=> {
 
 
 /** to add a set to a workout we need : the exercise(id) the reps and the kg , we already have them as variables  */
-const handleAddSet= async()=>{if (selectedExerciseId && kg && reps && workoutId   && token){
+const handleAddSet= async(payload)=>{
     try {
          const dto_response= await fetcher(`/workouts/${workoutId}/sets`,"POST",
-             { exerciseId:Number(selectedExerciseId),kg:Number(kg),reps:Number(reps) },token  )
+              payload ,token  )
                     console.log(dto_response);
-                    setKg("");
-                    setReps("");
-                     await handleSetsList();
+                         await handleSetsList();
+                     return true;
 
         }
-        catch (e){console.error(e);} } }
+        catch (e){console.error(e);}return false;  }
 
 
 /* gets all the workouts(List) of the user */
@@ -173,13 +168,10 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
             },[token]) /*everytime a user LOGS IN  it  returns the list of workouts */
 
 
-
     useEffect ( () => { if(workoutId){
             handleSetsList();     /*Everytime a workout changes we load the List of its sets */
            }
     },[workoutId])
-
-
 
 
  {/*SHOWS THE EXERCISES OF THE USER EVERYTIME A LOGIN OCCURS */}
@@ -193,11 +185,7 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
       } },[token])
 
 
-
 return(
-
-
-
 
 <div>
 
@@ -212,28 +200,11 @@ return(
       onAddExercise is a prop(function argument )  that is passed from app->ExerciseForm. Because its a function its called callback
           app->form->onADD->app(do on handle)-> results                                                                                                                                  */}
 
-
+        <AddSetComp onAddSet= {handleAddSet} token={token}  exercisesList={exercisesList}    />
+        <ShowSetsComp  onDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
      <button onClick={handleCreateWorkout}>
          Start a workout
          </button>
-
-   <select value={selectedExerciseId} //dropdown menu that shows the exercises that exist to add in the workout
-   onChange={ (event)=>    setSelectedExerciseId(event.target.value)  } > {/*event.target.value returns String */}
-   <option value=""> {"select exercise"} </option>
-
-   {    exercisesList.map( ex=>(
-        <option key={ex.id} value={ex.id}> {ex.name} </option> )) }
-
-   </select>
-   <input type="number" value={kg} placeholder="kg" onChange ={ (event)=>setKg(event.target.value) } />
-   <input type="number" value={reps} placeholder="reps" onChange= {(event)=>setReps(event.target.value)} />
-
-
- <button onClick={handleAddSet}>
-     add a set
-     </button>
-
-
 
  {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE  */}
  { workoutId &&  <p> {workoutId}    </p>     } {/* if the workoutId is valid */}
@@ -253,30 +224,7 @@ return(
 {/*THE DATE OF THE WORKOUT  */}
 <input  type ="date" value={date} placeholder="date" onChange ={ (event)=>setDate(event.target.value) }  />
 
-
-
-{/* SHOWS THE LIST OF THE SETS OF AN EXERCISE  */}
-<ul>
-    {   setsList.map (set =>  /* we find the exercise                            .we get its name         */
-        <li key={set.setId}> {exercisesList.find( (e)=> e.id=== set.exerciseId )  ?.name } kg:{set.kg} reps:{set.reps}
-            <button onClick={()=>handleDeleteSet(set)}> Delete set </button>     </li>  )   } </ul>
-        {/*we use()=> so the function starts only when activated */}
-
-
-
-
-
-
-
-
-
-
- </div>
-
-    )
-
-
-   }
+ </div> )}
 export default App;
 
 

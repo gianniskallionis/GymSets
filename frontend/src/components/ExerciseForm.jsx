@@ -13,7 +13,7 @@ const handleSubmit= async ()=>{
  if(primaryMuscle){
 let payload = {name:exerciseName,primaryMuscle:primaryMuscle,listOfSecondaries:secondaryMuscles }
 /*          dto_var=jsx_var                                        */
-const addExercise_response = await onAddExercise(payload)
+const addExercise_response = await onAddExercise(payload) // its like we are calling handleAddExercise (name,primaryMuscle,listOfSecondaries)
 if (addExercise_response){
 setExerciseName("");
 setPrimaryMuscle("");
