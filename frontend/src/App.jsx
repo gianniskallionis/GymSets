@@ -29,7 +29,7 @@ async function fetcher( path,method,body,token){
 
 function App(){
 
-const [token,setToken]=useState("");
+const [token,setToken]=useState(localStorage.getItem("token"));
 const [exercisesList,setExercisesList]=useState([]);
 const [workoutId,setWorkoutId]=useState("");
 const [workoutsList,setWorkoutsList]=useState([]);
@@ -69,7 +69,9 @@ const handleRegister= async (payload)=> {
      try {                         /*          path       ,method, body                         */
          const dto_response = await fetcher("/auth/login","POST",payload,"")
             if(dto_response){
-                setToken(dto_response.token);setLoginFlag("false");return true; } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
+                setToken(dto_response.token);
+                localStorage.setItem("token",dto_response.token);
+                setLoginFlag("false");return true; } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
                 else{console.log("dto response not found");return false;}
           }
          catch(e){console.error(e);setLoginFlag("true")}return false; }
