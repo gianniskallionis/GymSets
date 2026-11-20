@@ -1,3 +1,4 @@
+import { Routes, Route } from "react-router";
 import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
@@ -189,6 +190,12 @@ return(
 
 <div>
 
+
+    <Routes>
+    <Route path="login" element = {<p>Login</p>} />
+    <Route path="workouts" element={  <p>  workouts  </p>}  />
+    </Routes>
+
         <RegisterComp onRegister={handleRegister} />
         <LoginComp onLogin={handleLogin} token={token} loginFlag={loginFlag}  />
 
@@ -226,6 +233,10 @@ return(
 
  </div> )}
 export default App;
+
+
+
+
 
 
 
