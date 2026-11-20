@@ -142,7 +142,22 @@ async function handleWorkoutsList()   {
 const handleLeaveWorkout= ()=> {
     setWorkoutId("");  // we make the workoutId empty
        setWorkoutMsg(""); // we make  the message("you already started a workout") disappear
-           setSetsList([]) ; } // we empty the list of sets of the workout
+           setSetsList([]) ;  } // we empty the list of sets of the workout
+
+
+
+  const handleLogOut =()=>{
+     localStorage.removeItem("token");
+        setExercisesList([]);
+        setWorkoutId("");
+        setWorkoutsList([]);
+        setWorkoutMsg("");
+        setSetsList([]);
+        setToken("");
+      }
+
+
+
 
 async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWorkout
     getSetsOfWorkout asks for (ID,Authentication) and it returns a list with all of the sets of the workout
@@ -232,6 +247,9 @@ return(
 
 {/*THE DATE OF THE WORKOUT  */}
 <input  type ="date" value={date} placeholder="date" onChange ={ (event)=>setDate(event.target.value) }  />
+
+
+{token && <button onClick={handleLogOut}> Log out </button>  }
 
  </div> )}
 export default App;
