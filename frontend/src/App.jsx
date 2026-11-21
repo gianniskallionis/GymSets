@@ -1,9 +1,10 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate} from "react-router";
 import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
 import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 import {AddSetComp,ShowSetsComp} from "./components/SetsForm.jsx"
+
 // for a dynamic list (that changes) you need an id for each element
 
 
@@ -209,9 +210,11 @@ return(
 
 
     <Routes>
-    <Route path="login" element = {<p>Login</p>} />
-    <Route path="workouts" element={  <p>  workouts  </p>}  />
-    </Routes>
+           <Route path="login" element = {<p>Login</p>} />
+           <Route path="workouts" element={
+               token ? <p> workouts </p> :   <Navigate to="/login" replace/>
+                                           }   />
+           </Routes>
 
         <RegisterComp onRegister={handleRegister} />
         <LoginComp onLogin={handleLogin} token={token} loginFlag={loginFlag}  />
