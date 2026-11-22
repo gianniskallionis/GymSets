@@ -147,6 +147,15 @@ public class WorkoutController {
         // if the username is not the one matching the username of the user of the workout
         }
 
+        @DeleteMapping("/{id}")
+        public void deleteWorkout(@PathVariable Long id,Authentication authentication ){
+            Workout workout=returnWorkout(id,authentication.getName());
+            workoutRepository.delete(workout);
+        }
+
+
+
+
     }
 
 

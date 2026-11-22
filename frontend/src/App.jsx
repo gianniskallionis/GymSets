@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate} from "react-router";
+import { Routes, Route, Navigate,useNavigate} from "react-router";
 import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
@@ -42,6 +42,8 @@ const [workoutMsg,setWorkoutMsg]=useState("");
 const [date,setDate]=useState("");
 const [setsList,setSetsList]=useState([]);
 
+const navigate=useNavigate();
+
 
 /**the header "Content-Type": "application/json" means the type of content(body) of what we send is JSON
 aka: we are POSTING something in JSON form
@@ -76,7 +78,11 @@ const handleRegister= async (payload)=> {
             if(dto_response){
                 setToken(dto_response.token);
                 localStorage.setItem("token",dto_response.token);
-                setLoginFlag("false");return true; } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
+                setLoginFlag("false");
+                navigate("/workouts");
+                        return true; }/* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
+
+
                 else{console.log("dto response not found");return false;}
           }
          catch (e){
