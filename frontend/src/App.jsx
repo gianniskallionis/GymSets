@@ -20,9 +20,12 @@ async function fetcher( path,method,body,token){
         body: body  ? JSON.stringify(body) : undefined } )              /*    fetch_method: parameter_method */
 
        if (!fetch_answer.ok){
+
             const fetch_answer_text= await fetch_answer.text() ;    /*  we have to wait for the fetch_answer.text() */
-            throw new Error("fetch's answer ok failed reason: "+ fetch_answer_text  );
-            }
+            const error_var= new Error("fetch's answer ok failed reason: "+ fetch_answer_text )
+            error_var.status=fetch_answer.status;
+            throw error_var; } /*now fetcher throws an error with message + status  */
+
             const answer_text = await fetch_answer.text(); // if body = empty (delete), we send 0 .else we send json(body)
             if (!answer_text){return 0;}
             return  JSON.parse(answer_text);
@@ -60,7 +63,8 @@ const handleRegister= async (payload)=> {
             if (dto_response){console.log(dto_response);return true;}
             else{console.log("dto response not found");return false;}
                       }
-                     catch(e){console.error(e)}return false; }
+                     catch (e){
+                                           onFetchError(e); }return false; }
 
  /*   fetch sends username and password  to /auth/login . the first then  takes the answer(status, headers, body)
  keeps only its body and turns it into json
@@ -75,7 +79,8 @@ const handleRegister= async (payload)=> {
                 setLoginFlag("false");return true; } /* dto_response is {token: eyjXXXXXXXXXXX} and we need only the eyjxxxxx */
                 else{console.log("dto response not found");return false;}
           }
-         catch(e){console.error(e);setLoginFlag("true")}return false; }
+         catch (e){
+                        onFetchError(e);setLoginFlag("true"); }return false; }
 
 /** it creates an exercise
   the header "Authorization": 'Bearer ${token}' says: authorization : eyjXXXXXXXXXXX
@@ -89,7 +94,8 @@ const handleRegister= async (payload)=> {
                 return true;
                 }
          }
-        catch (e){console.error(e);}return false;  }
+       catch (e){
+                      onFetchError(e); }return false;  }
 
 
 const handleCreateWorkout=async ()=> {
@@ -112,7 +118,8 @@ const handleCreateWorkout=async ()=> {
                 handleWorkoutsList(); /*everytime i create a workout the list of workouts  gets updated */
                 }
         }
-          catch (e){console.error(e);} }
+         catch (e){
+                        onFetchError(e); } }
 
 
 /** to add a set to a workout we need : the exercise(id) the reps and the kg , we already have them as variables  */
@@ -125,7 +132,8 @@ const handleAddSet= async(payload)=>{
                      return true;
 
         }
-        catch (e){console.error(e);}return false;  }
+       catch (e){
+                      onFetchError(e); }return false;  }
 
 
 /* gets all the workouts(List) of the user */
@@ -137,7 +145,8 @@ async function handleWorkoutsList()   {
                         console.log(dto_response);
                                 }
             }
-            catch (e){console.error(e);} }
+            catch (e){
+               onFetchError(e); } }
 
 
 const handleLeaveWorkout= ()=> {
@@ -157,6 +166,13 @@ const handleLeaveWorkout= ()=> {
         setToken("");
       }
 
+  const onFetchError =(e)=>{
+     if(e.status===401){handleLogOut()}
+        console.error(e);}
+
+
+
+
 
 
 
@@ -168,7 +184,8 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
     const dto_response= await fetcher(`/workouts/${workoutId}/sets`,"GET",undefined,token)
         if(dto_response && workoutId){ setSetsList(dto_response);  }
         }
-        catch(e){console.error(e);}  }
+        catch (e){
+                       onFetchError(e); }  }
 
 
   async function handleDeleteSet(set) { console.log(set)
@@ -177,7 +194,8 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
      await fetcher(`/sets/${set.setId}`,"DELETE",undefined,token);
     /*By calling the backend (via fetcher) we already have deleted the set so we can get all the sets from handleSetsList */
    await handleSetsList(); /* handleSetsList shows the new list on the screen */}
-             catch(e){console.error(e);}
+             catch (e){
+                            onFetchError(e); }
     }}  ;
 
 
@@ -199,7 +217,8 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
           try{
           const dto_response=  await fetcher("/exercises","GET",undefined,token)
           setExercisesList(dto_response);}
-          catch(e){console.error(e);} }
+          catch (e){
+                         onFetchError(e); } }
           startFetching();
       } },[token])
 
