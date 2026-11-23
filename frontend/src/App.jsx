@@ -235,10 +235,13 @@ return(
 
 
     <Routes>
-           <Route path="login" element = {<p>Login</p>} />
-           <Route path="workouts" element={
-               token ? <p> workouts </p> :   <Navigate to="/login" replace/>
-                                           }   />
+           <Route path="login"
+           element = { token ? <Navigate to="/workouts" replace /> : <p>Login</p> }
+           />
+
+           <Route path="workouts"
+            element={ token ? <p> workouts </p> :   <Navigate to="/login" replace />}
+            />
            </Routes>
 
         <RegisterComp onRegister={handleRegister} />

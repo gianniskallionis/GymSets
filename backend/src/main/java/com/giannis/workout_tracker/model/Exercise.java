@@ -19,6 +19,7 @@ private String nameOfExercise;
 @Enumerated(EnumType.STRING)  // With the enum Type String the database gets the muscle as a string not a number
 private Muscles primaryMuscle;
 
+
     @Enumerated(EnumType.STRING)
     @ElementCollection // because in databases we can not have a table inside a table
 private List<Muscles>secondaries; // with ElementCollection we create a 2nd table for the secondaries muscles
@@ -32,6 +33,20 @@ private List<Muscles>secondaries; // with ElementCollection we create a 2nd tabl
     public Long getId(){
         return id;
     }
+
+
+    @ManyToOne(optional=false)
+    private User user;
+    public void setUser(User user){
+        if(user==null){throw new NullPointerException("PROBLEM:User is null");}
+        this.user=user;
+    }
+
+    public User getUser(){
+        return user;
+    }
+
+
 
     /**
      * Empty constructor required by JPA/Hibernate.
