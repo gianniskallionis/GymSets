@@ -47,7 +47,7 @@ public class SecurityConfig {
         http.cors(cors-> {}         );  // we activate the cors in the spring security
         http.csrf(csrf -> csrf.disable());  // first we close the csrf  so post and delete points dont return 403
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**","/error").permitAll()
                 .anyRequest().authenticated()); // we let requests that match the pattern in
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);//we add the filter before spring check
         http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));// makes spring statless( forgetfull)

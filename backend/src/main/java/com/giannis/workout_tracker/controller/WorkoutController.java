@@ -72,7 +72,7 @@ public class WorkoutController {
         // we find the workout from the id  of the workout and the name of the user from the token
 
         //                                   a workoutSet has ( Exercise, KG, reps )
-        WorkoutSet workoutsetCreated =new WorkoutSet(  exerciseRepository.findById(request.exerciseId()).
+        WorkoutSet workoutsetCreated =new WorkoutSet(  exerciseRepository.findByIdAndUserUsername(request.exerciseId(), authentication.getName()).
                 orElseThrow(()->new NoSuchElementException("Exercise "+ request.exerciseId() +" not found"))
                 ,request.kg(),request.reps());
         // in the repository classes through the extends we have methods to find each entity( to find an exercise you need

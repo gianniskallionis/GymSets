@@ -8,9 +8,13 @@ import java.util.Optional;
 public interface WorkoutSetRepository extends JpaRepository<WorkoutSet,Long> {
 
     Optional<WorkoutSet> findByIdAndWorkoutUserUsername(Long id, String username);
-} //                     it find the id of the workoutSet that has : the id given of the set AND
+ //                     it find the id of the workoutSet that has : the id given of the set AND
 //                                        the username given of the class workout
 
+    boolean existsByExerciseId(Long id);
+
+
+}
 /*
 IN repositories like this, the JPA repository has already implemented methods like save(x), findById(ID), findAll,
 deleteById(id),count(), all i have to do is make an object of XRepository to use them
