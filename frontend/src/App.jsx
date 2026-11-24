@@ -5,6 +5,7 @@ import ExerciseFormComp from "./components/ExerciseForm.jsx"
 import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 import {AddSetComp,ShowSetsComp} from "./components/SetsForm.jsx"
 import ExercisesPage from "./Pages/Exercises.jsx"
+import WorkoutsPage from "./Pages/Workouts.jsx"
 
 // for a dynamic list (that changes) you need an id for each element
 
@@ -248,6 +249,10 @@ return(
              <Route path="exercises"
                  element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} />
                    : <Navigate to="/login" replace /> } />
+
+              <Route path="workouts"
+                element={ token ? <WorkoutsPage workoutsList={workoutsList}/> :  <Navigate to="/login" replace />   } />
+
            </Routes>
 
         <RegisterComp onRegister={handleRegister} />
