@@ -118,6 +118,13 @@ private List<Muscles>secondaries; // with ElementCollection we create a 2nd tabl
         setNameOfExercise(name);
         setPrimaryMuscle(primaryMuscle);
         setSecondaries(listOfSecondaries);
+        if(listOfSecondaries.contains(primaryMuscle)){
+            throw new IllegalArgumentException("PROBLEM:Primary muscle can not be secondary");
+        }
+         HashSet<Muscles> doublesAuth= new HashSet<>(secondaries); // hashSet has UNIQUE only elements
+        if(  doublesAuth.size()!= secondaries.size()){
+            throw new IllegalArgumentException("PROBLEM:a muscle has been added  twice in secondaries");
+        }
     }
 
 

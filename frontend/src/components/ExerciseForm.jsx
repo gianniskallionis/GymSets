@@ -10,7 +10,7 @@ const [secondaryMuscles,setSecondaryMuscles]=useState([]);
 const [currentSecondary,setCurrentSecondary]=useState("");
 
 const handleSubmit= async ()=>{
- if(primaryMuscle){
+ if(primaryMuscle && exerciseName.trim() && !(secondaryMuscles.includes(primaryMuscle) ) ){
 let payload = {name:exerciseName,primaryMuscle:primaryMuscle,listOfSecondaries:secondaryMuscles }
 /*          dto_var=jsx_var                                        */
 const addExercise_response = await onAddExercise(payload) // its like we are calling handleAddExercise (name,primaryMuscle,listOfSecondaries)
@@ -22,7 +22,7 @@ setSecondaryMuscles([]);}
 
 
 const handleAddSecondary = ()=>{
-    if(currentSecondary && !secondaryMuscles.includes(currentSecondary)){
+    if(currentSecondary && !secondaryMuscles.includes(currentSecondary) &&(currentSecondary!==primaryMuscle)  ) {
         setSecondaryMuscles([...secondaryMuscles,currentSecondary]);
         setCurrentSecondary("");
         }
