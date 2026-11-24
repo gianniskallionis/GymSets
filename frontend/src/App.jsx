@@ -4,6 +4,7 @@ import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
 import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 import {AddSetComp,ShowSetsComp} from "./components/SetsForm.jsx"
+import ExercisesPage from "./Pages/Exercises.jsx"
 
 // for a dynamic list (that changes) you need an id for each element
 
@@ -235,6 +236,7 @@ return(
 
 
     <Routes>
+
            <Route path="login"
            element = { token ? <Navigate to="/workouts" replace /> : <p>Login</p> }
            />
@@ -242,18 +244,15 @@ return(
            <Route path="workouts"
             element={ token ? <p> workouts </p> :   <Navigate to="/login" replace />}
             />
+
+             <Route path="exercises"
+                 element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} />
+                   : <Navigate to="/login" replace /> } />
            </Routes>
 
         <RegisterComp onRegister={handleRegister} />
         <LoginComp onLogin={handleLogin} token={token} loginFlag={loginFlag}  />
 
-      <ExercisesComp exercisesListProp={exercisesList} />
-{/*    function      variable( argument of function) =value of variable   */}
-      <ExerciseFormComp onAddExercise={handleAddExercise} />
-  {/*  onAddExercise is the way handleAddExercise goes from app.jsx to ExerciseForm.jsx
-      onAddExercise is the second name for the same  function (handleAddExercise), the same function is known as onAddExercise by ExerciseForm
-      onAddExercise is a prop(function argument )  that is passed from app->ExerciseForm. Because its a function its called callback
-          app->form->onADD->app(do on handle)-> results                                                                                                                                  */}
 
         <AddSetComp onAddSet= {handleAddSet} token={token}  exercisesList={exercisesList}    />
         <ShowSetsComp  onDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
