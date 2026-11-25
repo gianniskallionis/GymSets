@@ -40,8 +40,7 @@ const [token,setToken]=useState(localStorage.getItem("token"));
 const [exercisesList,setExercisesList]=useState([]);
 const [workoutId,setWorkoutId]=useState("");
 const [workoutsList,setWorkoutsList]=useState([]);
-const [loginFlag,setLoginFlag]=useState("");
-const [workoutMsg,setWorkoutMsg]=useState("");
+const [loginFlag,setLoginFlag]=useState("")
 const [date,setDate]=useState("");
 const [setsList,setSetsList]=useState([]);
 
@@ -112,7 +111,7 @@ const handleCreateWorkout=async ()=> {
     let month= new Date().getMonth()+1;
     let day= new Date().getDate();
 
-    if ( workoutId){ setWorkoutMsg("you already started a workout"); return; }
+
       if(date){   /* the date is given as "2020-1-1" */       /*Check whether the date is custom or today's */
                     const dt=date.split("-");
                     year=Number(dt[0]);
@@ -160,9 +159,9 @@ async function handleWorkoutsList()   {
 
 const handleLeaveWorkout= ()=> {
     setWorkoutId("");  // we make the workoutId empty
-       setWorkoutMsg(""); // we make  the message("you already started a workout") disappear
-           setSetsList([]) ;  } // we empty the list of sets of the workout
 
+           setSetsList([]) ;  // we empty the list of sets of the workout
+          navigate("/workouts");                 }
 
 
   const handleLogOut =()=>{
@@ -170,7 +169,6 @@ const handleLeaveWorkout= ()=> {
         setExercisesList([]);
         setWorkoutId("");
         setWorkoutsList([]);
-        setWorkoutMsg("");
         setSetsList([]);
         setToken("");
       }
@@ -252,7 +250,9 @@ return(
                 :  <Navigate to="/login" replace />   } />
 
                 <Route path="/workouts/:id"
-                  element={  token ? <AWorkoutPage setWorkoutId={setWorkoutId} handleDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
+                  element={  token ? <AWorkoutPage setWorkoutId={setWorkoutId} handleDeleteSet={handleDeleteSet}
+                  exercisesList={exercisesList} setsList={setsList}  handleAddSet={handleAddSet} token={token} handleDeleteSet={handleDeleteSet}
+                    handleLeaveWorkout={handleLeaveWorkout}/>
                     :   <Navigate to="/login" replace /> } />
 
            </Routes>
@@ -274,7 +274,7 @@ return(
 {/*LEAVE WORKOUT MSG when Workout active AND  message that you cant start  the workout twice  */}
 {workoutId && <button onClick={handleLeaveWorkout}> leave workout </button>  }
 {/*IF workoutId exists then we show the button    */}
-{  workoutMsg && <p>  {workoutMsg} </p> }   {/*IF workoutMsg is NOT empty we show the message:"you already started a workout"       */}
+
 
 
 {/*THE DATE OF THE WORKOUT  */}
