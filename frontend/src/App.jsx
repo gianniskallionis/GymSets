@@ -3,7 +3,7 @@ import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
 import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
-import {AddSetComp,ShowSetsComp} from "./components/SetsForm.jsx"
+import {AddSetComp} from "./components/SetsForm.jsx"
 import ExercisesPage from "./Pages/Exercises.jsx"
 import WorkoutsPage from "./Pages/Workouts.jsx"
 import AWorkoutPage from "./Pages/AWorkout.jsx"
@@ -252,7 +252,8 @@ return(
                 :  <Navigate to="/login" replace />   } />
 
                 <Route path="/workouts/:id"
-                    element={  token ? <AWorkoutPage /> :   <Navigate to="/login" replace /> } />
+                  element={  token ? <AWorkoutPage setWorkoutId={setWorkoutId} handleDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
+                    :   <Navigate to="/login" replace /> } />
 
            </Routes>
 
@@ -261,7 +262,7 @@ return(
 
 
         <AddSetComp onAddSet= {handleAddSet} token={token}  exercisesList={exercisesList}    />
-        <ShowSetsComp  onDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
+
 
  { workoutId &&  <p> {workoutId}    </p>     }
  {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE
