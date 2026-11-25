@@ -131,7 +131,6 @@ const handleAddSet= async(payload)=>{
                     console.log(dto_response);
                          await handleSetsList();
                      return true;
-
         }
        catch (e){
                       onFetchError(e); }return false;  }
@@ -217,6 +216,13 @@ try{
                             onFetchError(e);return e.status; }  }
 
 
+async function handleGetVolume(id){
+    try{
+        const dto_response=await fetcher(`/workouts/${id}/volume`,"GET",undefined,token);
+       return dto_response;
+        }
+        catch(e){ onFetchError(e);return null;  }
+    }
 
 
 
@@ -267,7 +273,7 @@ return(
                 <Route path="/workouts/:id"
                   element={  token ? <AWorkoutPage setWorkoutId={setWorkoutId} handleDeleteSet={handleDeleteSet}
                   exercisesList={exercisesList} setsList={setsList}  handleAddSet={handleAddSet} token={token}
-                    handleLeaveWorkout={handleLeaveWorkout}   handleDeleteWorkout={handleDeleteWorkout}  />
+                    handleLeaveWorkout={handleLeaveWorkout}   handleDeleteWorkout={handleDeleteWorkout} handleGetVolume={handleGetVolume}  />
                     :   <Navigate to="/login" replace /> } />
 
            </Routes>
