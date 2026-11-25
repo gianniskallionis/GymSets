@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate,useNavigate} from "react-router";
+import { Routes, Route, Navigate,useNavigate,useParams} from "react-router";
 import {useEffect,useState } from "react";
 import ExercisesComp from "./components/ExerciseList.jsx"
 import ExerciseFormComp from "./components/ExerciseForm.jsx"
@@ -6,6 +6,7 @@ import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 import {AddSetComp,ShowSetsComp} from "./components/SetsForm.jsx"
 import ExercisesPage from "./Pages/Exercises.jsx"
 import WorkoutsPage from "./Pages/Workouts.jsx"
+import AWorkoutPage from "./Pages/AWorkout.jsx"
 
 // for a dynamic list (that changes) you need an id for each element
 
@@ -238,20 +239,20 @@ return(
 
     <Routes>
 
-           <Route path="login"
+           <Route path="/login"
            element = { token ? <Navigate to="/workouts" replace /> : <p>Login</p> }
            />
-
-
-
-             <Route path="exercises"
+             <Route path="/exercises"
                  element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} />
                    : <Navigate to="/login" replace /> } />
 
-              <Route path="workouts"
+              <Route path="/workouts"
                 element={ token ? <WorkoutsPage workoutsList={workoutsList} handleCreateWorkout={handleCreateWorkout}
                 date={date} setDate={setDate} />
                 :  <Navigate to="/login" replace />   } />
+
+                <Route path="/workouts/:id"
+                    element={  token ? <AWorkoutPage /> :   <Navigate to="/login" replace /> } />
 
            </Routes>
 
@@ -262,15 +263,12 @@ return(
         <AddSetComp onAddSet= {handleAddSet} token={token}  exercisesList={exercisesList}    />
         <ShowSetsComp  onDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
 
-
+ { workoutId &&  <p> {workoutId}    </p>     }
  {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE
- { workoutId &&  <p> {workoutId}    </p>     }  if the workoutId is valid
-<ul>
-  we use ()=> so onClick doesnt automatically start without the ()=> the functs starts automatically
-    { workoutsList.map(  wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
+ { workoutsList.map(  wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
         {wk.id} {wk.year}-{wk.month}-{wk.day}
         </li>    )}
-</ul> */}
+ */}
 
 {/*LEAVE WORKOUT MSG when Workout active AND  message that you cant start  the workout twice  */}
 {workoutId && <button onClick={handleLeaveWorkout}> leave workout </button>  }
