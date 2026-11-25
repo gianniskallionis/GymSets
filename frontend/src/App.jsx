@@ -242,16 +242,16 @@ return(
            element = { token ? <Navigate to="/workouts" replace /> : <p>Login</p> }
            />
 
-           <Route path="workouts"
-            element={ token ? <p> workouts </p> :   <Navigate to="/login" replace />}
-            />
+
 
              <Route path="exercises"
                  element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} />
                    : <Navigate to="/login" replace /> } />
 
               <Route path="workouts"
-                element={ token ? <WorkoutsPage workoutsList={workoutsList}/> :  <Navigate to="/login" replace />   } />
+                element={ token ? <WorkoutsPage workoutsList={workoutsList} handleCreateWorkout={handleCreateWorkout}
+                date={date} setDate={setDate} />
+                :  <Navigate to="/login" replace />   } />
 
            </Routes>
 
@@ -261,18 +261,16 @@ return(
 
         <AddSetComp onAddSet= {handleAddSet} token={token}  exercisesList={exercisesList}    />
         <ShowSetsComp  onDeleteSet={handleDeleteSet} exercisesList={exercisesList} setsList={setsList} />
-     <button onClick={handleCreateWorkout}>
-         Start a workout
-         </button>
 
- {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE  */}
- { workoutId &&  <p> {workoutId}    </p>     } {/* if the workoutId is valid */}
+
+ {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE
+ { workoutId &&  <p> {workoutId}    </p>     }  if the workoutId is valid
 <ul>
-  {/* we use ()=> so onClick doesnt automatically start without the ()=> the functs starts automatically*/}
+  we use ()=> so onClick doesnt automatically start without the ()=> the functs starts automatically
     { workoutsList.map(  wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
         {wk.id} {wk.year}-{wk.month}-{wk.day}
         </li>    )}
-</ul>
+</ul> */}
 
 {/*LEAVE WORKOUT MSG when Workout active AND  message that you cant start  the workout twice  */}
 {workoutId && <button onClick={handleLeaveWorkout}> leave workout </button>  }
