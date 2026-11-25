@@ -66,8 +66,6 @@ return (<div>
         </ul>
 
 
-
-
     <button onClick={handleSubmit}>
         add an exercise
      </button>

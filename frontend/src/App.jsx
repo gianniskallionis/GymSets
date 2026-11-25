@@ -1,9 +1,6 @@
-import { Routes, Route, Navigate,useNavigate,useParams} from "react-router";
+import { Routes, Route, Navigate,useNavigate} from "react-router";
 import {useEffect,useState } from "react";
-import ExercisesComp from "./components/ExerciseList.jsx"
-import ExerciseFormComp from "./components/ExerciseForm.jsx"
 import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
-import {AddSetComp} from "./components/SetsForm.jsx"
 import ExercisesPage from "./Pages/Exercises.jsx"
 import WorkoutsPage from "./Pages/Workouts.jsx"
 import AWorkoutPage from "./Pages/AWorkout.jsx"
@@ -102,8 +99,7 @@ const handleRegister= async (payload)=> {
                 return true;
                 }
          }
-       catch (e){
-                      onFetchError(e); }return false;  }
+       catch (e){ onFetchError(e); }return false;  }
 
 
 const handleCreateWorkout=async ()=> {
@@ -111,23 +107,20 @@ const handleCreateWorkout=async ()=> {
     let month= new Date().getMonth()+1;
     let day= new Date().getDate();
 
-
       if(date){   /* the date is given as "2020-1-1" */       /*Check whether the date is custom or today's */
                     const dt=date.split("-");
                     year=Number(dt[0]);
                     month=Number(dt[1]);
-                    day=Number(dt[2]);
-                    }
-    try{
+                    day=Number(dt[2]);}
+                     try{
         const dto_response= await fetcher("/workouts","POST",{year,month,day },token  )
             if(dto_response && token){
                 setWorkoutId(dto_response.id);
                 console.log(dto_response);
                 handleWorkoutsList(); /*everytime i create a workout the list of workouts  gets updated */
-                }
-        }
-         catch (e){
-                        onFetchError(e); } }
+                  navigate(`/workouts/${dto_response.id}`)
+                } }
+         catch (e){onFetchError(e); } }
 
 
 /** to add a set to a workout we need : the exercise(id) the reps and the kg , we already have them as variables  */
@@ -205,6 +198,28 @@ async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWork
                             onFetchError(e); }
     }}  ;
 
+    async function handleDeleteWorkout(workoutId){
+try{
+     await fetcher(`/workouts/${workoutId}`,"DELETE",undefined,token);
+   await handleWorkoutsList();
+   navigate("/workouts");}
+             catch (e){
+                            onFetchError(e); }
+        }
+
+    async function handleDeleteExercise(id){
+try{
+     await fetcher(`/exercises/${id}`,"DELETE",undefined,token);
+  setExercisesList( exercisesList.filter(  ex => ex.id!== id )           )
+                    return true;  }
+             catch (e){
+
+                            onFetchError(e);return e.status; }  }
+
+
+
+
+
 
         useEffect ( ()=> { if (token){
             handleWorkoutsList();
@@ -241,18 +256,18 @@ return(
            element = { token ? <Navigate to="/workouts" replace /> : <p>Login</p> }
            />
              <Route path="/exercises"
-                 element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} />
+                 element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} handleDeleteExercise={handleDeleteExercise}  />
                    : <Navigate to="/login" replace /> } />
 
               <Route path="/workouts"
                 element={ token ? <WorkoutsPage workoutsList={workoutsList} handleCreateWorkout={handleCreateWorkout}
-                date={date} setDate={setDate} />
+                date={date} setDate={setDate}   />
                 :  <Navigate to="/login" replace />   } />
 
                 <Route path="/workouts/:id"
                   element={  token ? <AWorkoutPage setWorkoutId={setWorkoutId} handleDeleteSet={handleDeleteSet}
-                  exercisesList={exercisesList} setsList={setsList}  handleAddSet={handleAddSet} token={token} handleDeleteSet={handleDeleteSet}
-                    handleLeaveWorkout={handleLeaveWorkout}/>
+                  exercisesList={exercisesList} setsList={setsList}  handleAddSet={handleAddSet} token={token}
+                    handleLeaveWorkout={handleLeaveWorkout}   handleDeleteWorkout={handleDeleteWorkout}  />
                     :   <Navigate to="/login" replace /> } />
 
            </Routes>
@@ -261,24 +276,7 @@ return(
         <LoginComp onLogin={handleLogin} token={token} loginFlag={loginFlag}  />
 
 
-        <AddSetComp onAddSet= {handleAddSet} token={token}  exercisesList={exercisesList}    />
 
-
- { workoutId &&  <p> {workoutId}    </p>     }
- {/*SHOWS  THE ID OF THE WORKOUT AND THE DATE
- { workoutsList.map(  wk=>   <li key={wk.id}     onClick = { ()=>setWorkoutId(wk.id)   } >
-        {wk.id} {wk.year}-{wk.month}-{wk.day}
-        </li>    )}
- */}
-
-{/*LEAVE WORKOUT MSG when Workout active AND  message that you cant start  the workout twice  */}
-{workoutId && <button onClick={handleLeaveWorkout}> leave workout </button>  }
-{/*IF workoutId exists then we show the button    */}
-
-
-
-{/*THE DATE OF THE WORKOUT  */}
-<input  type ="date" value={date} placeholder="date" onChange ={ (event)=>setDate(event.target.value) }  />
 
 
 {token && <button onClick={handleLogOut}> Log out </button>  }
