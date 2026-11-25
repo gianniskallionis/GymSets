@@ -1,4 +1,4 @@
-
+import {Link} from "react-router";
 
 
 
@@ -14,7 +14,8 @@ return (<div>   {/* if the workoutId is valid */}
               <ul>
                 {/* we use ()=> so onClick doesnt automatically start without the ()=> the functs starts automatically*/}
                   { workoutsList.map(  wk=>   <li key={wk.id}    >
-                      {wk.id} {wk.year}-{wk.month}-{wk.day}
+                      <Link to ={`/workouts/${wk.id}`}>
+                      {wk.id} {wk.year}-{wk.month}-{wk.day} </Link>
                       </li>    )}
               </ul>
 
