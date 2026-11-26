@@ -1,4 +1,4 @@
-import muscles from "../Muscles.js";
+
 import {useState } from "react";
 
 function AddSetComp( {onAddSet,token,exercisesList}){

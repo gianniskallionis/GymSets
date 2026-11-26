@@ -1,13 +1,12 @@
 import { Routes, Route, Navigate,useNavigate} from "react-router";
 import {useEffect,useState } from "react";
-import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 import ExercisesPage from "./Pages/Exercises.jsx"
 import WorkoutsPage from "./Pages/Workouts.jsx"
 import AWorkoutPage from "./Pages/AWorkout.jsx"
 import LoginPage from "./Pages/Login.jsx"
 import RegisterPage from "./Pages/Register.jsx"
+import NavBarComp from "./components/NavBar.jsx"
 // for a dynamic list (that changes) you need an id for each element
-
 
 const urlHost=import.meta.env.VITE_LOCALURL;
 
@@ -172,10 +171,6 @@ const handleLeaveWorkout= ()=> {
 
 
 
-
-
-
-
 async function handleSetsList(){/*WE CALL THE BACKEND ENDPOINT     getSetsOfWorkout
     getSetsOfWorkout asks for (ID,Authentication) and it returns a list with all of the sets of the workout
     we give id from ${workoutId} and authorization from token */
@@ -226,8 +221,6 @@ async function handleGetVolume(id){
     }
 
 
-
-
         useEffect ( ()=> { if (token){
             handleWorkoutsList();
             }
@@ -253,10 +246,9 @@ async function handleGetVolume(id){
 
 
 return(
-
 <div>
 
-
+{token&& <NavBarComp handleLogOut={handleLogOut} />}
     <Routes>
 
         <Route path="/register"
@@ -283,12 +275,6 @@ return(
            </Routes>
 
 
-
-
-
-
-
-{token && <button onClick={handleLogOut}> Log out </button>  }
 
  </div> )}
 export default App;
