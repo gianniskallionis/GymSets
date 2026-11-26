@@ -4,7 +4,8 @@ import {RegisterComp,LoginComp} from "./components/RegisterLogin.jsx"
 import ExercisesPage from "./Pages/Exercises.jsx"
 import WorkoutsPage from "./Pages/Workouts.jsx"
 import AWorkoutPage from "./Pages/AWorkout.jsx"
-
+import LoginPage from "./Pages/Login.jsx"
+import RegisterPage from "./Pages/Register.jsx"
 // for a dynamic list (that changes) you need an id for each element
 
 
@@ -258,9 +259,12 @@ return(
 
     <Routes>
 
+        <Route path="/register"
+        element={ token ? <Navigate to="/workouts" replace />:      <RegisterPage handleRegister={handleRegister} />    } />
+
            <Route path="/login"
-           element = { token ? <Navigate to="/workouts" replace /> : <p>Login</p> }
-           />
+           element = {token ? <Navigate to="/workouts" replace />:   <LoginPage onLogin={handleLogin} token={token} loginFlag={loginFlag}/>  }
+                    />
              <Route path="/exercises"
                  element={ token ?   <ExercisesPage exercisesList={exercisesList} handleAddExercise={handleAddExercise} handleDeleteExercise={handleDeleteExercise}  />
                    : <Navigate to="/login" replace /> } />
@@ -278,8 +282,7 @@ return(
 
            </Routes>
 
-        <RegisterComp onRegister={handleRegister} />
-        <LoginComp onLogin={handleLogin} token={token} loginFlag={loginFlag}  />
+
 
 
 
