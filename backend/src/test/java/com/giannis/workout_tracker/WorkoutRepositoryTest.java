@@ -41,7 +41,7 @@ public class WorkoutRepositoryTest {
         //1 Arrange
                 // creating the workout
         User user= new User("giannis","test1234");//the user of the workout
-        Workout workout= new Workout(2026,10,27);
+        Workout workout= new Workout("push",2026,10,27);
         Exercise exerciseBench = new Exercise("Bench press", Exercise.Muscles.CHEST,
                 new ArrayList<>(List.of(Exercise.Muscles.TRICEPS, Exercise.Muscles.FRONT_DELTS)));
         WorkoutSet setBench1= new WorkoutSet(exerciseBench,65.0,10);

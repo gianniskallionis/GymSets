@@ -41,7 +41,7 @@ const  handleSubmitRegister=  async()=>{
              </div>  )
     }
 
-function LoginComp({onLogin,token,loginFlag}){
+function LoginComp({onLogin,loginFlag}){
     const [username,setUsername]= useState("");
     const [password,setPassword]= useState("");
 
@@ -71,7 +71,7 @@ function LoginComp({onLogin,token,loginFlag}){
                 <button onClick={handleSubmitLogin}>
                                 Login
                             </button>
-                            <div> { token && <p>Logged in </p> } </div>   <div>{loginFlag==="true" && <p> Username or Password is incorrect</p>} </div>
+                               <div>{loginFlag==="true" && <p> Username or Password is incorrect</p>} </div>
 
                     </div>   )
 

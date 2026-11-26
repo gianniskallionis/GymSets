@@ -8,6 +8,6 @@ package com.giannis.workout_tracker.dto;
  * we use a record here to keep that data that we receive from the phone through the Api
  *
  */
-public record CreateWorkoutRequest(int year, int month, int day) {
+public record CreateWorkoutRequest(String name,int year, int month, int day) {
 
 }

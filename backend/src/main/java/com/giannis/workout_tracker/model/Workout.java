@@ -24,6 +24,13 @@ public class Workout {
     public User getUser(){
             return user;
         }
+    public String name;
+    public String getName(){return name;}
+
+    public void setName(String name){
+        if(name!=null){this.name=name;}
+        else{this.name="workout";}
+    }
 
 
     // cascade is what happens to childen entities when a father entity is altered
@@ -53,8 +60,9 @@ public class Workout {
      *
      *
      */
-    public Workout(int year,int month, int day) {
+    public Workout(String name,int year,int month, int day) {
         date=LocalDate.of( year,  month,  day);
+        setName(name);
          sets =new ArrayList<WorkoutSet>();
     }
 

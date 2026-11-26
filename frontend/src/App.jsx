@@ -40,7 +40,6 @@ const [workoutsList,setWorkoutsList]=useState([]);
 const [loginFlag,setLoginFlag]=useState("")
 const [date,setDate]=useState("");
 const [setsList,setSetsList]=useState([]);
-
 const navigate=useNavigate();
 
 
@@ -103,7 +102,7 @@ const handleRegister= async (payload)=> {
        catch (e){ onFetchError(e); }return false;  }
 
 
-const handleCreateWorkout=async ()=> {
+const handleCreateWorkout=async (name)=> {
     let year=new Date().getFullYear();
     let month= new Date().getMonth()+1;
     let day= new Date().getDate();
@@ -114,7 +113,7 @@ const handleCreateWorkout=async ()=> {
                     month=Number(dt[1]);
                     day=Number(dt[2]);}
                      try{
-        const dto_response= await fetcher("/workouts","POST",{year,month,day },token  )
+        const dto_response= await fetcher("/workouts","POST",{name,year,month,day },token  )
             if(dto_response && token){
                 setWorkoutId(dto_response.id);
                 console.log(dto_response);
@@ -202,7 +201,6 @@ try{
              catch (e){
                             onFetchError(e); }
         }
-
     async function handleDeleteExercise(id){
 try{
      await fetcher(`/exercises/${id}`,"DELETE",undefined,token);
@@ -212,7 +210,6 @@ try{
 
                             onFetchError(e);return e.status; }  }
 
-
 async function handleGetVolume(id){
     try{
         const dto_response=await fetcher(`/workouts/${id}/volume`,"GET",undefined,token);
@@ -221,18 +218,15 @@ async function handleGetVolume(id){
         catch(e){ onFetchError(e);return null;  }
     }
 
-
         useEffect ( ()=> { if (token){
             handleWorkoutsList();
             }
             },[token]) /*everytime a user LOGS IN  it  returns the list of workouts */
 
-
     useEffect ( () => { if(workoutId){
             handleSetsList();     /*Everytime a workout changes we load the List of its sets */
            }
     },[workoutId])
-
 
  {/*SHOWS THE EXERCISES OF THE USER EVERYTIME A LOGIN OCCURS */}
   useEffect( ()=> { if(token){  /*useEffect=== When THIS [token] changes , DO:  whatever is within {} */
@@ -270,14 +264,12 @@ return(
                 <Route path="/workouts/:id"
                   element={  token ? <AWorkoutPage setWorkoutId={setWorkoutId} handleDeleteSet={handleDeleteSet}
                   exercisesList={exercisesList} setsList={setsList}  handleAddSet={handleAddSet} token={token}
-                    handleLeaveWorkout={handleLeaveWorkout}   handleDeleteWorkout={handleDeleteWorkout} handleGetVolume={handleGetVolume}  />
+                    handleLeaveWorkout={handleLeaveWorkout}   handleDeleteWorkout={handleDeleteWorkout} handleGetVolume={handleGetVolume}  workoutsList={workoutsList}   />
                     :   <Navigate to="/login" replace /> } />
 
                     <Route path="*" element={ token ? <Navigate to="/workouts" replace />   :  <Navigate to="/login" replace />   } />
 
            </Routes>
-
-
 
  </div> )}
 export default App;

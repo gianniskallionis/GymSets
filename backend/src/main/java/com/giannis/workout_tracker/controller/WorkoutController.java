@@ -48,11 +48,11 @@ public class WorkoutController {
 
 
 
-        Workout workoutCreated=new Workout(request.year(), request.month(), request.day()); // we create a new workout with the date
+        Workout workoutCreated=new Workout(request.name(),request.year(), request.month(), request.day()); // we create a new workout with the date
         workoutCreated.setUser(userOfWorkout);// we save the user into the workout before we save it in the DB
         workoutCreated=workoutRepository.save(workoutCreated); // we save it in the DB
 
-        return new WorkoutResponse(workoutCreated.getId(), workoutCreated.getDate().getYear() ,workoutCreated.getDate().getMonthValue()
+        return new WorkoutResponse(workoutCreated.getName(),workoutCreated.getId(), workoutCreated.getDate().getYear() ,workoutCreated.getDate().getMonthValue()
                 , workoutCreated.getDate().getDayOfMonth());  // we return a workout object witht the id and the date
 
 
@@ -121,7 +121,7 @@ public class WorkoutController {
         List <WorkoutResponse> listOfWorkouts = new ArrayList<>();
         for (Workout W: workoutRepository.findByUserUsername(authentication.getName())) { // for every workout in the repository
 
-            WorkoutResponse Wo=new WorkoutResponse(W.getId() ,W.getDate().getYear(),W.getDate().getMonthValue(),W.getDate().getDayOfMonth()) ;
+            WorkoutResponse Wo=new WorkoutResponse(W.getName(),W.getId() ,W.getDate().getYear(),W.getDate().getMonthValue(),W.getDate().getDayOfMonth()) ;
             // we make a Workout response out of the Workout so we can  receive it
             listOfWorkouts.add(Wo);
         }
