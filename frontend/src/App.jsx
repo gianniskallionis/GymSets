@@ -61,7 +61,8 @@ EVERY HANDLER COMMUNICATES 1-1 WITH A BACKEND ENDPOINT FUNCTION
 const handleRegister= async (payload)=> {
     try{
         const dto_response = await fetcher("/auth/register","POST",payload,"")
-            if (dto_response){console.log(dto_response);return true;}
+            if (dto_response){console.log(dto_response);
+              navigate("/login"); return true;}
             else{console.log("dto response not found");return false;}
                       }
                      catch (e){
@@ -271,6 +272,8 @@ return(
                   exercisesList={exercisesList} setsList={setsList}  handleAddSet={handleAddSet} token={token}
                     handleLeaveWorkout={handleLeaveWorkout}   handleDeleteWorkout={handleDeleteWorkout} handleGetVolume={handleGetVolume}  />
                     :   <Navigate to="/login" replace /> } />
+
+                    <Route path="*" element={ token ? <Navigate to="/workouts" replace />   :  <Navigate to="/login" replace />   } />
 
            </Routes>
 
